@@ -38,6 +38,7 @@ export const Signup = () => {
         <input
           type="text"
           name="name"
+          className="form-control"
           id="MerTextInput"
           placeholder="name"
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
@@ -49,6 +50,7 @@ export const Signup = () => {
         <input
           type="password"
           name="password"
+          className="form-control"
           id="MerTextInput"
           placeholder="password"
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
