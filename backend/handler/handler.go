@@ -102,7 +102,7 @@ type getBalanceResponse struct {
 }
 
 type loginRequest struct {
-	UserID   int64  `json:"user_id"`
+	UserName   string  `json:"user_name"`
 	Password string `json:"password"`
 }
 
@@ -180,7 +180,7 @@ func (h *Handler) Login(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, err)
 	}
 
-	user, err := h.UserRepo.GetUser(ctx, req.UserID)
+	user, err := h.UserRepo.GetUserByName(ctx, req.UserName)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err)
 	}
@@ -194,7 +194,7 @@ func (h *Handler) Login(c echo.Context) error {
 
 	// Set custom claims
 	claims := &JwtCustomClaims{
-		req.UserID,
+		user.ID,
 		jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour * 72)),
 		},
