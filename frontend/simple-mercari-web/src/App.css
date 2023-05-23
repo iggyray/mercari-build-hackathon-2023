@@ -61,6 +61,26 @@ body {
   transition-property: background-color, color, fill;
 }
 
+.button {
+  /* align-items: center; */
+  -webkit-box-pack: center;
+  justify-content: center;
+  box-sizing: border-box;
+  width: 100%;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  overflow: hidden;
+  line-height: 1.4em;
+  white-space: nowrap;
+  text-align: center;
+  text-decoration: none;
+  /* vertical-align: middle; */
+  word-break: break-word;
+  /* border-style: solid; */
+  /* border-width: 1px; */
+  cursor: pointer;
+}
+
 #MerDisableButton {
   /* color: var(--alias-color-text-inverse-default); */
   background-color: #575757;
