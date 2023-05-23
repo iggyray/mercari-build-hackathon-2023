@@ -11,9 +11,9 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/labstack/echo/v4"
 	"github.com/iggyray/mecari-build-hackathon-2023/backend/db"
 	"github.com/iggyray/mecari-build-hackathon-2023/backend/domain"
+	"github.com/labstack/echo/v4"
 	"github.com/pkg/errors"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -37,7 +37,6 @@ type registerRequest struct {
 }
 
 type registerResponse struct {
-	ID   int64  `json:"id"`
 	Name string `json:"name"`
 }
 
@@ -149,12 +148,19 @@ func (h *Handler) Register(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError, err)
 	}
 
-	userID, err := h.UserRepo.AddUser(c.Request().Context(), domain.User{Name: req.Name, Password: string(hash)})
-	if err != nil {
+	newUser := domain.User{Name: req.Name, Password: string(hash)}
+
+	if err := newUser.Validate(); err != nil {
+		fmt.Println(err)
 		return echo.NewHTTPError(http.StatusInternalServerError, err)
 	}
 
-	return c.JSON(http.StatusOK, registerResponse{ID: userID, Name: req.Name})
+	if h.UserRepo.AddUser(c.Request().Context(), newUser) != nil {
+		
+		return echo.NewHTTPError(http.StatusInternalServerError, err)
+	}
+
+	return c.JSON(http.StatusOK, registerResponse{Name: newUser.Name})
 }
 
 func (h *Handler) Login(c echo.Context) error {
