@@ -1,18 +1,15 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { useCookies } from "react-cookie";
-import { toast } from "react-toastify";
-import { fetcher } from "../../helper";
+import React, { useState } from "react"
+import { useNavigate } from "react-router-dom"
+import { toast } from "react-toastify"
+import { fetcher } from "../../helper"
 
 export const Signup = () => {
-  const [name, setName] = useState<string>();
-  const [password, setPassword] = useState<string>();
-  const [userID, setUserID] = useState<number>();
-  const [_, setCookie] = useCookies(["userID"]);
+  const [name, setName] = useState<string>()
+  const [password, setPassword] = useState<string>()
 
-  const navigate = useNavigate();
+  const navigate = useNavigate()
   const onSubmit = (_: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    fetcher<{ id: number; name: string }>(`/register`, {
+    fetcher<{ name: string }>(`/register`, {
       method: "POST",
       headers: {
         Accept: "application/json",
@@ -24,17 +21,15 @@ export const Signup = () => {
       }),
     })
       .then((user) => {
-        toast.success("New account is created!");
-        console.log("POST success:", user.id);
-        setCookie("userID", user.id);
-        setUserID(user.id);
-        navigate("/");
+        toast.success(`New account with name: ${user.name} has been created!`)
+        console.log("POST success:", user.name)
+        navigate("/")
       })
       .catch((err) => {
-        console.log(`POST error:`, err);
-        toast.error(err.message);
-      });
-  };
+        console.log(`POST error:`, err)
+        toast.error("Sign Up Failed")
+      })
+  }
 
   return (
     <div>
@@ -46,7 +41,7 @@ export const Signup = () => {
           id="MerTextInput"
           placeholder="name"
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-            setName(e.target.value);
+            setName(e.target.value)
           }}
           required
         />
@@ -57,16 +52,13 @@ export const Signup = () => {
           id="MerTextInput"
           placeholder="password"
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-            setPassword(e.target.value);
+            setPassword(e.target.value)
           }}
         />
         <button onClick={onSubmit} id="MerButton">
           Signup
         </button>
-        {userID ? (
-          <p>Use "{userID}" as UserID for login</p>
-        ) : null}
       </div>
     </div>
-  );
-};
+  )
+}
