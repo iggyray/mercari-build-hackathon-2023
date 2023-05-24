@@ -1,15 +1,15 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { useCookies } from "react-cookie";
-import { toast } from "react-toastify";
-import { fetcher } from "../../helper";
+import React, { useState } from "react"
+import { useNavigate } from "react-router-dom"
+import { useCookies } from "react-cookie"
+import { toast } from "react-toastify"
+import { fetcher } from "../../helper"
 
 export const Login = () => {
-  const [userID, setUserID] = useState<number>();
-  const [password, setPassword] = useState<string>();
-  const [_, setCookie] = useCookies(["userID", "token"]);
+  const [userName, setUserName] = useState<string>()
+  const [password, setPassword] = useState<string>()
+  const [_, setCookie] = useCookies(["userID", "token"])
 
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
   const onSubmit = (_: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     fetcher<{ id: number; name: string; token: string }>(`/login`, {
@@ -19,34 +19,35 @@ export const Login = () => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        user_id: userID,
+        user_name: userName,
         password: password,
       }),
     })
       .then((user) => {
-        toast.success("Signed in!");
-        console.log("POST success:", user.id);
-        setCookie("userID", user.id);
-        setCookie("token", user.token);
-        navigate("/");
+        toast.success("Signed in!")
+        console.log("POST success:", user.id)
+        setCookie("userID", user.id)
+        setCookie("token", user.token)
+        navigate("/")
       })
       .catch((err) => {
-        console.log(`POST error:`, err);
-        toast.error(err.message);
-      });
-  };
+        console.log(`POST error:`, err)
+        toast.error(err.message)
+      })
+  }
 
   return (
     <div>
       <div className="Login">
-        <label id="MerInputLabel">User ID</label>
+        <label id="MerInputLabel">User Name</label>
         <input
-          type="number"
-          name="userID"
+          type="text"
+          name="userName"
+          className="form-control"
           id="MerTextInput"
-          placeholder="UserID"
+          placeholder="name"
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-            setUserID(Number(e.target.value));
+            setUserName(e.target.value)
           }}
           required
         />
@@ -54,10 +55,11 @@ export const Login = () => {
         <input
           type="password"
           name="password"
+          className="form-control"
           id="MerTextInput"
           placeholder="password"
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-            setPassword(e.target.value);
+            setPassword(e.target.value)
           }}
         />
         <button onClick={onSubmit} id="MerButton">
@@ -65,5 +67,5 @@ export const Login = () => {
         </button>
       </div>
     </div>
-  );
-};
+  )
+}
