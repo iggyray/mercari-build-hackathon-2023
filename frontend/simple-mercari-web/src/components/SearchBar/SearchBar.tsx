@@ -35,19 +35,5 @@ export const SearchBar = () => {
         <FaSearch />
       </Button>
     </Form>
-
-    // <div className="input-group">
-    //   <input
-    //     onKeyDown={onKeydown}
-    //     onChange={onChange}
-    //     className="form-control SearchBar"
-    //     placeholder="Search for an item"
-    //   ></input>
-    //   <div className="input-group-append">
-    //     <button onClick={onSubmitKeyword} className="btn btn-outline-secondary">
-    //       Search
-    //     </button>
-    //   </div>
-    // </div>
   )
 }
