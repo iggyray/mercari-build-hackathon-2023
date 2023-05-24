@@ -1,12 +1,12 @@
 .navbar {
   display: flex;
-  flex-direction: row;
+  flex-direction: column-reverse;
   width: 100%;
   border-bottom: 1px solid gray;
 }
 
 #search-group {
-  display: hide;
+  height: 35px;
   -webkit-box-align: center;
   align-items: center;
 
