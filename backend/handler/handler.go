@@ -54,6 +54,14 @@ type getOnSaleItemsResponse struct {
 	CategoryName string `json:"category_name"`
 }
 
+type getItemsResponse struct {
+	ID           int32  			`json:"id"`
+	Name         string 			`json:"name"`
+	Price        int64  			`json:"price"`
+	CategoryName string 			`json:"category_name"`
+	Status		 domain.ItemStatus	`json:"status"`
+}
+
 type getItemResponse struct {
 	ID           int32             `json:"id"`
 	Name         string            `json:"name"`
@@ -344,6 +352,39 @@ func (h *Handler) GetItem(c echo.Context) error {
 		Description:  item.Description,
 		Status:       item.Status,
 	})
+}
+
+func (h *Handler) SearchItems(c echo.Context) error {
+	ctx := c.Request().Context()
+
+	keyword := c.QueryParam("keyword")
+
+	items, err := h.ItemRepo.GetItemsByKeyword(ctx, keyword)
+
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err)
+	}
+
+	var res []getItemsResponse
+	for _, item := range items {
+		cats, err := h.ItemRepo.GetCategories(ctx)
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, err)
+		}
+		for _, cat := range cats {
+			if cat.ID == item.CategoryID {
+				res = append(res, getItemsResponse{
+					ID: item.ID, 
+					Name: item.Name, 
+					Price: item.Price, 
+					CategoryName: cat.Name, 
+					Status: item.Status,
+				})
+			}
+		}
+	}
+
+	return c.JSON(http.StatusOK, res)
 }
 
 func (h *Handler) GetUserItems(c echo.Context) error {

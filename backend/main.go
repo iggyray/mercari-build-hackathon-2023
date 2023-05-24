@@ -10,11 +10,11 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/iggyray/mecari-build-hackathon-2023/backend/db"
+	"github.com/iggyray/mecari-build-hackathon-2023/backend/handler"
 	echojwt "github.com/labstack/echo-jwt/v4"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-	"github.com/iggyray/mecari-build-hackathon-2023/backend/db"
-	"github.com/iggyray/mecari-build-hackathon-2023/backend/handler"
 )
 
 const (
@@ -81,6 +81,7 @@ func run(ctx context.Context) int {
 
 	e.GET("/items", h.GetOnSaleItems)
 	e.GET("/items/:itemID", h.GetItem)
+	e.GET("/search", h.SearchItems)
 	e.GET("/items/:itemID/image", h.GetImage)
 	e.GET("/items/categories", h.GetCategories)
 	e.POST("/register", h.Register)
