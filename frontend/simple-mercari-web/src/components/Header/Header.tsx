@@ -4,6 +4,7 @@ import { Navbar, Container, Nav, Form, FormControl, Button } from 'react-bootstr
 import { FaSearch } from 'react-icons/fa';
 import { AiOutlineClose } from 'react-icons/ai';
 import { useState } from "react";
+import { SearchBar } from "../SearchBar/SearchBar";
 
 export const Header: React.FC = () => {
   const [cookies, _, removeCookie] = useCookies(["userID", "token"]);
@@ -27,12 +28,7 @@ export const Header: React.FC = () => {
             <Navbar.Toggle aria-controls="responsive-navbar-nav" onClick={handleNavbarToggle}> {showNavbar ? <AiOutlineClose /> : <FaSearch />}</Navbar.Toggle>
             <Navbar.Collapse id="responsive-navbar-nav" className={showNavbar ? 'show' : ''}>
               <Nav className="me-auto">
-                <Form className="d-flex" id="search-group">
-                  <FormControl type="text" placeholder="Search" id="search-input" />
-                  <Button id="search-button">
-                    <FaSearch />
-                  </Button>
-                </Form>
+                <SearchBar />
               </Nav>
             </Navbar.Collapse>
           </Nav>
