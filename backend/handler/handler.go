@@ -39,21 +39,6 @@ type registerRequest struct {
 type registerResponse struct {
 	Name string `json:"name"`
 }
-
-type getUserItemsResponse struct {
-	ID           int32  `json:"id"`
-	Name         string `json:"name"`
-	Price        int64  `json:"price"`
-	CategoryName string `json:"category_name"`
-}
-
-type getOnSaleItemsResponse struct {
-	ID           int32  `json:"id"`
-	Name         string `json:"name"`
-	Price        int64  `json:"price"`
-	CategoryName string `json:"category_name"`
-}
-
 type getItemsResponse struct {
 	ID           int32  			`json:"id"`
 	Name         string 			`json:"name"`
@@ -297,17 +282,17 @@ func (h *Handler) Sell(c echo.Context) error {
 	return c.JSON(http.StatusOK, "successful")
 }
 
-func (h *Handler) GetOnSaleItems(c echo.Context) error {
+func (h *Handler) GetAllItems(c echo.Context) error {
 	ctx := c.Request().Context()
 
-	items, err := h.ItemRepo.GetOnSaleItems(ctx)
+	items, err := h.ItemRepo.GetAllItems(ctx)
 	// TODO: not found handling
 	// http.StatusNotFound(404)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, err)
+		return echo.NewHTTPError(http.StatusNotFound, err)
 	}
 
-	var res []getOnSaleItemsResponse
+	var res []getItemsResponse
 	for _, item := range items {
 		cats, err := h.ItemRepo.GetCategories(ctx)
 		if err != nil {
@@ -315,7 +300,7 @@ func (h *Handler) GetOnSaleItems(c echo.Context) error {
 		}
 		for _, cat := range cats {
 			if cat.ID == item.CategoryID {
-				res = append(res, getOnSaleItemsResponse{ID: item.ID, Name: item.Name, Price: item.Price, CategoryName: cat.Name})
+				res = append(res, getItemsResponse{ID: item.ID, Name: item.Name, Price: item.Price, CategoryName: cat.Name, Status: item.Status})
 			}
 		}
 	}
@@ -402,7 +387,7 @@ func (h *Handler) GetUserItems(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError, err)
 	}
 
-	var res []getUserItemsResponse
+	var res []getItemsResponse
 	for _, item := range items {
 		cats, err := h.ItemRepo.GetCategories(ctx)
 		if err != nil {
@@ -410,7 +395,7 @@ func (h *Handler) GetUserItems(c echo.Context) error {
 		}
 		for _, cat := range cats {
 			if cat.ID == item.CategoryID {
-				res = append(res, getUserItemsResponse{ID: item.ID, Name: item.Name, Price: item.Price, CategoryName: cat.Name})
+				res = append(res, getItemsResponse{ID: item.ID, Name: item.Name, Price: item.Price, CategoryName: cat.Name, Status: item.Status})
 			}
 		}
 	}

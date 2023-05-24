@@ -79,7 +79,7 @@ func run(ctx context.Context) int {
 	e.POST("/initialize", h.Initialize)
 	e.GET("/log", h.AccessLog)
 
-	e.GET("/items", h.GetOnSaleItems)
+	e.GET("/items", h.GetAllItems)
 	e.GET("/items/:itemID", h.GetItem)
 	e.GET("/search", h.SearchItems)
 	e.GET("/items/:itemID/image", h.GetImage)

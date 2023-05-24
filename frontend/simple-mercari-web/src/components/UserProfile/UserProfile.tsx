@@ -1,24 +1,25 @@
-import { useState, useEffect } from "react";
-import { useCookies } from "react-cookie";
-import { useParams } from "react-router-dom";
-import { MerComponent } from "../MerComponent";
-import { toast } from "react-toastify";
-import { ItemList } from "../ItemList";
-import { fetcher } from "../../helper";
+import { useState, useEffect } from "react"
+import { useCookies } from "react-cookie"
+import { useParams } from "react-router-dom"
+import { MerComponent } from "../MerComponent"
+import { toast } from "react-toastify"
+import { ItemList } from "../ItemList"
+import { fetcher } from "../../helper"
 
 interface Item {
-  id: number;
-  name: string;
-  price: number;
-  category_name: string;
+  id: number
+  name: string
+  price: number
+  category_name: string
+  status: number
 }
 
 export const UserProfile: React.FC = () => {
-  const [items, setItems] = useState<Item[]>([]);
-  const [balance, setBalance] = useState<number>();
-  const [addedbalance, setAddedBalance] = useState<number>();
-  const [cookies] = useCookies(["token"]);
-  const params = useParams();
+  const [items, setItems] = useState<Item[]>([])
+  const [balance, setBalance] = useState<number>()
+  const [addedbalance, setAddedBalance] = useState<number>()
+  const [cookies] = useCookies(["token"])
+  const params = useParams()
 
   const fetchItems = () => {
     fetcher<Item[]>(`/users/${params.id}/items`, {
@@ -31,10 +32,10 @@ export const UserProfile: React.FC = () => {
     })
       .then((items) => setItems(items))
       .catch((err) => {
-        console.log(`GET error:`, err);
-        toast.error(err.message);
-      });
-  };
+        console.log(`GET error:`, err)
+        toast.error(err.message)
+      })
+  }
 
   const fetchUserBalance = () => {
     fetcher<{ balance: number }>(`/balance`, {
@@ -46,18 +47,18 @@ export const UserProfile: React.FC = () => {
       },
     })
       .then((res) => {
-        setBalance(res.balance);
+        setBalance(res.balance)
       })
       .catch((err) => {
-        console.log(`GET error:`, err);
-        toast.error(err.message);
-      });
-  };
+        console.log(`GET error:`, err)
+        toast.error(err.message)
+      })
+  }
 
   useEffect(() => {
-    fetchItems();
-    fetchUserBalance();
-  }, []);
+    fetchItems()
+    fetchUserBalance()
+  }, [])
 
   const onBalanceSubmit = () => {
     fetcher(`/balance`, {
@@ -73,10 +74,10 @@ export const UserProfile: React.FC = () => {
     })
       .then((_) => window.location.reload())
       .catch((err) => {
-        console.log(`POST error:`, err);
-        toast.error(err.message);
-      });
-  };
+        console.log(`POST error:`, err)
+        toast.error(err.message)
+      })
+  }
 
   return (
     <MerComponent>
@@ -92,7 +93,7 @@ export const UserProfile: React.FC = () => {
               id="MerTextInput"
               placeholder="0"
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                setAddedBalance(Number(e.target.value));
+                setAddedBalance(Number(e.target.value))
               }}
               required
             />
@@ -108,5 +109,5 @@ export const UserProfile: React.FC = () => {
         </div>
       </div>
     </MerComponent>
-  );
-};
+  )
+}

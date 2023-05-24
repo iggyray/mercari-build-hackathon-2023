@@ -8,6 +8,7 @@ interface Item {
   name: string
   price: number
   category_name: string
+  status: number
 }
 
 export const Item: React.FC<{ item: Item }> = ({ item }) => {
