@@ -196,6 +196,18 @@ body {
   border-radius: 5%;
 }
 
+.SearchBar {
+  background-color: #222427;
+  color: white;
+  border-color: #6d757d;
+}
+
+.SearchBar:focus {
+  background-color: #222427;
+  color: white;
+  border-color: #6d757d;
+}
+
 .UserProfile {
   width: 100%;
   display: flex;
