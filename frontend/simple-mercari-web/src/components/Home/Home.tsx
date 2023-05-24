@@ -38,11 +38,9 @@ export const Home = () => {
       },
     })
       .then((data) => {
-        console.log("GET success:", data)
         setItems(data)
       })
       .catch((err) => {
-        console.log(`GET error:`, err)
         toast.error(err.message)
       })
   }
@@ -56,11 +54,9 @@ export const Home = () => {
       },
     })
       .then((data) => {
-        console.log("Search success:")
         setItems(data)
       })
       .catch((err) => {
-        console.log(`GET error:`, err)
         toast.error(err.message)
       })
   }
