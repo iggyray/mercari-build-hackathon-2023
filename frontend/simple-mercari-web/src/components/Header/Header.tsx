@@ -42,16 +42,6 @@ export const Header: React.FC = () => {
 
         </Container>
       </Navbar>
-      {/* <header>
-        <p>
-          <b>Simple Mercari</b>
-        </p>
-        <div className="LogoutButtonContainer">
-          <button onClick={onLogout} id="MerButton">
-            Logout
-          </button>
-        </div>
-      </header> */}
     </>
   );
 }

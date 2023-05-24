@@ -20,7 +20,6 @@ export const Home = () => {
   const [cookies] = useCookies(["userID", "token"])
   const [items, setItems] = useState<Item[]>([])
 
-  // const [searchValue, setSearchValue] = useState<string>("")
   const searchValue = useSearchBar(state => state.searchValue)
 
 
@@ -106,7 +105,6 @@ export const Home = () => {
         <span>
           <p>Logined User ID: {cookies.userID}</p>
         </span>
-        {/* <SearchBar onSearch={handleSearch} /> */}
         <p>Showing search results for: {searchValue}</p>
         <ItemList items={items} />
       </div>
