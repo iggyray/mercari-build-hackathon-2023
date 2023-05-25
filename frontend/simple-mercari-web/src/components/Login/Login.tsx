@@ -7,7 +7,7 @@ import { fetcher } from "../../helper"
 export const Login = () => {
   const [userName, setUserName] = useState<string>()
   const [password, setPassword] = useState<string>()
-  const [_, setCookie] = useCookies(["userID", "token"])
+  const [_, setCookie] = useCookies(["userID", "userName", "token"])
 
   const navigate = useNavigate()
 
@@ -25,8 +25,9 @@ export const Login = () => {
     })
       .then((user) => {
         toast.success("Signed in!")
-        console.log("POST success:", user.id)
+        console.log("POST success:", user.name)
         setCookie("userID", user.id)
+        setCookie("userName", user.name)
         setCookie("token", user.token)
         navigate("/")
       })
