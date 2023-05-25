@@ -60,10 +60,11 @@ export const Home = () => {
         toast.error(err.message)
       })
   }
-  searchItems(searchEndpoint)
+
 
   useEffect(() => {
     fetchItems()
+    searchItems(searchEndpoint)
   }, [])
 
   const [isLogInPage, setIsLogInPage] = useState(true)
