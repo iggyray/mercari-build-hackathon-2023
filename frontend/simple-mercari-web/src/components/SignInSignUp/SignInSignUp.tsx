@@ -14,7 +14,7 @@ export const SignUpAndSignIn: React.FC = () => {
     useEffect(() => {
 
 
-        if (cookies.token ||
+        if (cookies.token &&
             cookies.userID) {
             navigate(`/user/${cookies.userID}`)
         }
