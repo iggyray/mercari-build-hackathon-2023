@@ -10,6 +10,13 @@ interface Prop {
 
 export const MerComponent: React.FC<Prop> = (props) => {
   const [cookies] = useCookies(["token", "userID"]);
+  // if (
+  //   !cookies.token ||
+  //   !cookies.userID ||
+  //   (props.condition && props.condition() === false)
+  // ) {
+  //   return <NotFound />;
+  // }
   return (
     <>
       {props.children}
