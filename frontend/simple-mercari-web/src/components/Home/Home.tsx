@@ -19,8 +19,9 @@ interface HomeComponentProps {
 }
 
 export const Home = (props: HomeComponentProps) => {
-  const [cookies] = useCookies(["userID", "token"])
+  const [cookies] = useCookies(["userID", "userName", "token"])
   const [items, setItems] = useState<Item[]>([])
+  const [profile, setProfile] = useState<Item[]>([])
 
   const handleSearch = (value: string) => {
     const searchEndpoint = `/search?keyword=${value}`
@@ -77,7 +78,7 @@ export const Home = (props: HomeComponentProps) => {
       <div className="ItemListPage">
         {cookies.token ||
           cookies.userID ? <span>
-          <p>Logined User ID: {cookies.userID}</p>
+          <p>Logined User: {cookies.userName}</p>
         </span> : null}
         {props.searchValue ?
           <p>Showing search results for: {props.searchValue}</p> : null}
