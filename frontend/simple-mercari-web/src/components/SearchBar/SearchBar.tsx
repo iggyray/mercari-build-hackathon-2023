@@ -4,12 +4,6 @@ import { FaSearch } from 'react-icons/fa';
 import { Search } from "react-router";
 import { useSearchBar } from "../../common/provider"
 
-interface SearchBarProps {
-  searchValue: string
-  onSearch: (keyword: string) => void
-}
-
-
 export const SearchBar = () => {
   const [keyword, setKeyword] = useState<string>("")
   const onSearch = useSearchBar(state => state.onSearch)
