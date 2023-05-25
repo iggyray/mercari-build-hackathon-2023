@@ -8,6 +8,7 @@ import { useEffect, useState } from "react"
 import { toast } from "react-toastify"
 import { fetcher } from "../../helper"
 import "react-toastify/dist/ReactToastify.css"
+import { useSearchBar } from "../../common/provider"
 
 interface Item {
   id: number
@@ -19,15 +20,14 @@ export const Home = () => {
   const [cookies] = useCookies(["userID", "token"])
   const [items, setItems] = useState<Item[]>([])
 
-  const [searchValue, setSearchValue] = useState<string>("")
+  const searchValue = useSearchBar(state => state.searchValue)
 
-  const handleSearch = (value: string) => {
-    setSearchValue(value)
 
-    const searchEndpoint = `/search?keyword=${value}`
 
-    searchItems(searchEndpoint)
-  }
+  const searchEndpoint = `/search?keyword=${searchValue}`
+
+
+
 
   const fetchItems = () => {
     fetcher<Item[]>(`/items`, {
@@ -61,8 +61,10 @@ export const Home = () => {
       })
   }
 
+
   useEffect(() => {
     fetchItems()
+    searchItems(searchEndpoint)
   }, [])
 
   const [isLogInPage, setIsLogInPage] = useState(true)
@@ -104,7 +106,6 @@ export const Home = () => {
         <span>
           <p>Logined User ID: {cookies.userID}</p>
         </span>
-        <SearchBar onSearch={handleSearch} />
         <p>Showing search results for: {searchValue}</p>
         <ItemList items={items} />
       </div>
