@@ -1,14 +1,12 @@
 import { Login } from "../Login"
 import { Signup } from "../Signup"
 import { ItemList } from "../ItemList"
-import { SearchBar } from "../SearchBar"
 import { useCookies } from "react-cookie"
 import { MerComponent } from "../MerComponent"
 import { useEffect, useState } from "react"
 import { toast } from "react-toastify"
 import { fetcher } from "../../helper"
 import "react-toastify/dist/ReactToastify.css"
-import { useSearchBar } from "../../common/provider"
 
 interface Item {
   id: number
@@ -16,18 +14,19 @@ interface Item {
   price: number
   category_name: string
 }
-export const Home = () => {
+interface HomeComponentProps {
+  searchValue: string
+}
+
+export const Home = (props: HomeComponentProps) => {
   const [cookies] = useCookies(["userID", "token"])
   const [items, setItems] = useState<Item[]>([])
 
-  const searchValue = useSearchBar(state => state.searchValue)
+  const handleSearch = (value: string) => {
+    const searchEndpoint = `/search?keyword=${value}`
 
-
-
-  const searchEndpoint = `/search?keyword=${searchValue}`
-
-
-
+    searchItems(searchEndpoint)
+  }
 
   const fetchItems = () => {
     fetcher<Item[]>(`/items`, {
@@ -61,11 +60,13 @@ export const Home = () => {
       })
   }
 
-
   useEffect(() => {
     fetchItems()
-    searchItems(searchEndpoint)
   }, [])
+
+  useEffect(() => {
+    handleSearch(props.searchValue)
+  }, [props.searchValue])
 
   const [isLogInPage, setIsLogInPage] = useState(true)
 
@@ -106,7 +107,7 @@ export const Home = () => {
         <span>
           <p>Logined User ID: {cookies.userID}</p>
         </span>
-        <p>Showing search results for: {searchValue}</p>
+        <p>Showing search results for: {props.searchValue}</p>
         <ItemList items={items} />
       </div>
     </MerComponent>
