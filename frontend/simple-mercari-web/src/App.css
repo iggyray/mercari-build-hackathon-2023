@@ -217,13 +217,15 @@ body {
   border-radius: 5%;
 }
 
-.SearchBar {
+.ItemFilter {
   background-color: #222427;
   color: white;
   border-color: #6d757d;
+  width: 20%;
+  margin-bottom: 10px;
 }
 
-.SearchBar:focus {
+.ItemFilter:focus {
   background-color: #222427;
   color: white;
   border-color: #6d757d;
