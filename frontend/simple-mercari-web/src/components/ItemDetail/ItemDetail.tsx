@@ -66,22 +66,26 @@ export const ItemDetail = () => {
   };
 
   const onSubmit = (_: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    fetcher<Item[]>(`/purchase/${params.id}`, {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${cookies.token}`,
-      },
-      body: JSON.stringify({
-        user_id: Number(cookies.userID),
-      }),
-    })
-      .then((_) => window.location.reload())
-      .catch((err) => {
-        console.log(`POST error:`, err);
-        toast.error(err.message);
-      });
+    if (cookies.token && cookies.userID) {
+      fetcher<Item[]>(`/purchase/${params.id}`, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${cookies.token}`,
+        },
+        body: JSON.stringify({
+          user_id: Number(cookies.userID),
+        }),
+      })
+        .then((_) => window.location.reload())
+        .catch((err) => {
+          console.log(`POST error:`, err);
+          toast.error(err.message);
+        });
+    } else {
+      navigate("/login")
+    }
   };
 
   useEffect(() => {

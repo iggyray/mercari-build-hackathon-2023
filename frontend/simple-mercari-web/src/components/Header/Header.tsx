@@ -44,7 +44,7 @@ export const Header = ({ onSearch }: SearchBarProps) => {
           {
             showNavbar ? null : <Nav className="md:ml-auto">
 
-              {cookies.token ||
+              {cookies.token &&
                 cookies.userID ? <Nav> <Nav.Link onClick={() => navigate(`/user/${cookies.userID}`)}>Account</Nav.Link>
                 <Nav.Link onClick={onLogout}>Logout</Nav.Link> <button id="MerButton" onClick={() => navigate("/sell")}>Sell</button> </Nav> : <Nav><Nav.Link onClick={() => navigate("/login")}>Account</Nav.Link><button id="MerButton" onClick={() => navigate("/login")}>Sell</button> </Nav>}
 

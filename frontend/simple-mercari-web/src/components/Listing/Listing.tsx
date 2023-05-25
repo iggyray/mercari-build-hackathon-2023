@@ -3,6 +3,7 @@ import { useCookies } from "react-cookie"
 import { MerComponent } from "../MerComponent"
 import { toast } from "react-toastify"
 import { fetcher } from "../../helper"
+import { useNavigate } from "react-router-dom";
 
 interface Category {
   id: number
@@ -18,6 +19,7 @@ type formDataType = {
 }
 
 export const Listing: React.FC = () => {
+
   const initialState = {
     name: "",
     category_id: 1,
@@ -28,6 +30,12 @@ export const Listing: React.FC = () => {
   const [values, setValues] = useState<formDataType>(initialState)
   const [categories, setCategories] = useState<Category[]>([])
   const [cookies] = useCookies(["token", "userID"])
+
+  const navigate = useNavigate()
+  if (!cookies.token || !cookies.userID) {
+    navigate("/login")
+  }
+
 
   const onValueChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setValues({
