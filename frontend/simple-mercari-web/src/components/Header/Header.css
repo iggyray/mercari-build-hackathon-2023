@@ -3,6 +3,11 @@
   flex-direction: column-reverse;
   width: 100%;
   border-bottom: 1px solid gray;
+  margin-bottom: 20px;
+}
+
+.hand-cursor {
+  cursor: pointer;
 }
 
 #search-group {
@@ -35,14 +40,6 @@
   outline: none;
   appearance: none;
 }
-
-
-
-/* @media (min-width: 767px) {
-  #search-group {
-    display: none;
-  }
-} */
 
 
 #search-button {

@@ -70,48 +70,21 @@ export const Home = (props: HomeComponentProps) => {
 
   const [isLogInPage, setIsLogInPage] = useState(true)
 
-  const toggleIsLogInPage = () => {
-    setIsLogInPage(!isLogInPage)
-  }
 
-  const signUpAndSignInPage = (
-    <>
-      {!isLogInPage && (
-        <div>
-          <Signup />
-          <button
-            className="btn btn-outline-danger button"
-            onClick={toggleIsLogInPage}
-          >
-            Log In Instead
-          </button>
-        </div>
-      )}
-      {isLogInPage && (
-        <div>
-          <Login />
-          <button
-            className="btn btn-outline-danger button"
-            onClick={toggleIsLogInPage}
-          >
-            Sign Up Instead
-          </button>
-        </div>
-      )}
-    </>
-  )
 
   const itemListPage = (
     <MerComponent>
       <div className="ItemListPage">
-        <span>
+        {cookies.token ||
+          cookies.userID ? <span>
           <p>Logined User ID: {cookies.userID}</p>
-        </span>
-        <p>Showing search results for: {props.searchValue}</p>
+        </span> : null}
+        {props.searchValue ?
+          <p>Showing search results for: {props.searchValue}</p> : null}
         <ItemList items={items} />
       </div>
     </MerComponent>
   )
 
-  return <>{cookies.token ? itemListPage : signUpAndSignInPage}</>
+  return <>{itemListPage}</>
 }
