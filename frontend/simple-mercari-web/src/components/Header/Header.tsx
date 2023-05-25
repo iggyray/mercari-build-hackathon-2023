@@ -13,7 +13,7 @@ interface SearchBarProps {
 }
 
 export const Header = ({ onSearch }: SearchBarProps) => {
-  const [cookies, _, removeCookie] = useCookies(["userID", "token"]);
+  const [cookies, _, removeCookie] = useCookies(["userID", "userName", "token"]);
   const [showNavbar, setShowNavbar] = useState(false);
   const navigate = useNavigate();
 
@@ -21,6 +21,7 @@ export const Header = ({ onSearch }: SearchBarProps) => {
   const onLogout = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     event.preventDefault()
     removeCookie("userID")
+    removeCookie("userName")
     removeCookie("token")
   }
   const handleNavbarToggle = () => {
