@@ -37,6 +37,7 @@ type registerRequest struct {
 }
 
 type registerResponse struct {
+	ID   int64  `json:"id"`
 	Name string `json:"name"`
 }
 type getItemsResponse struct {
@@ -148,12 +149,12 @@ func (h *Handler) Register(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError, err)
 	}
 
-	if h.UserRepo.AddUser(c.Request().Context(), newUser) != nil {
-
+	userID, err := h.UserRepo.AddUser(c.Request().Context(), newUser)
+	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err)
 	}
 
-	return c.JSON(http.StatusOK, registerResponse{Name: newUser.Name})
+	return c.JSON(http.StatusOK, registerResponse{ID: userID, Name: newUser.Name})
 }
 
 func (h *Handler) Login(c echo.Context) error {
