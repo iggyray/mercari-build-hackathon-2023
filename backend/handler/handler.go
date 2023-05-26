@@ -385,7 +385,7 @@ func (h *Handler) GetItem(c echo.Context) error {
 func (h *Handler) SearchItems(c echo.Context) error {
 	ctx := c.Request().Context()
 
-	keyword := c.QueryParam("keyword")
+	keyword := c.QueryParam("name")
 
 	items, err := h.ItemRepo.GetItemsByKeyword(ctx, keyword)
 
