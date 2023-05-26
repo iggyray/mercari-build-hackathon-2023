@@ -231,6 +231,14 @@ body {
   border-color: #6d757d;
 }
 
+.HeaderLogIn {
+  width: 120px;
+}
+
+.HeaderLogIn2 {
+  width: 150px;
+}
+
 .UserProfile {
   width: 100%;
   display: flex;
