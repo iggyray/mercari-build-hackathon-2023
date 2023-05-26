@@ -87,6 +87,7 @@ func run(ctx context.Context) int {
 	e.POST("/register", h.Register)
 	e.POST("/login", h.Login)
 	e.POST("/loginv2", h.LoginV2)
+	e.GET("/items/:itemID/comments", h.GetCommentsByItemId)
 
 	// Login required
 	l := e.Group("")
@@ -95,8 +96,7 @@ func run(ctx context.Context) int {
 	l.POST("/items", h.AddItem)
 	l.POST("/sell", h.Sell)
 	l.POST("/purchase/:itemID", h.Purchase)
-	l.GET("/:itemID/comments", h.GetCommentsByItemId)
-	l.POST("/:itemID/comments", h.AddComment)
+	l.POST("/items/:itemID/comments", h.AddComment)
 	l.GET("/balance", h.GetBalance)
 	l.POST("/balance", h.AddBalance)
 
