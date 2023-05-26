@@ -195,3 +195,48 @@ func (r *ItemDBRepository) GetCategories(ctx context.Context) ([]domain.Category
 	}
 	return cats, nil
 }
+
+type CommentRepository interface {
+	AddComment(ctx context.Context, comment domain.Comment) (domain.Comment, error)
+	GetCommentsByItemId(ctx context.Context, itemId int32) ([]domain.Comment, error)
+}
+type CommentDBRepository struct {
+	*sql.DB
+}
+
+func NewCommentRepository(db *sql.DB) CommentRepository {
+	return &CommentDBRepository{DB: db}
+}
+
+func (r *CommentDBRepository) AddComment(ctx context.Context, comment domain.Comment) (domain.Comment, error) {
+	if _, err := r.ExecContext(ctx, "INSERT INTO comments (user_id, item_id, content) VALUES (?, ?, ?)", comment.UserID, comment.ItemID, comment.Content); err != nil {
+		return domain.Comment{}, err
+	}
+	// TODO: if other insert query is executed at the same time, it might return wrong id
+	// http.StatusConflict(409) 既に同じIDがあった場合
+	row := r.QueryRowContext(ctx, "SELECT * FROM comments WHERE rowid = LAST_INSERT_ROWID()")
+
+	var res domain.Comment
+	return res, row.Scan(&res.CommentID, &res.UserID, &res.ItemID, &res.Content)
+}
+
+func (r *CommentDBRepository) GetCommentsByItemId(ctx context.Context, itemId int32) ([]domain.Comment, error) {
+	rows, err := r.QueryContext(ctx, "SELECT * FROM comments WHERE item_id = ?", itemId)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var comments []domain.Comment
+	for rows.Next() {
+		var comment domain.Comment
+		if err := rows.Scan(&comment.CommentID, &comment.UserID, &comment.ItemID, &comment.Content, &comment.CreatedAt); err != nil {
+			return nil, err
+		}
+		comments = append(comments, comment)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return comments, nil
+}
