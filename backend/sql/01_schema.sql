@@ -38,6 +38,7 @@ CREATE TABLE IF NOT EXISTS comments
     user_id integer NOT NULL,
     item_id integer NOT NULL,
     content text NOT NULL,
+    created_at text NOT NULL DEFAULT (DATETIME('now', 'localtime')),
     foreign key (user_id) references users (id),
     foreign key (item_id) references items (id)
 );
