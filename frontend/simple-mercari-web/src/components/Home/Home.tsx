@@ -114,7 +114,7 @@ export const Home = (props: HomeComponentProps) => {
           className="form-control ItemFilter"
           onChange={handleItemFilterChange}
         >
-          <option value="showAll">Show all</option>
+          <option value="showAll">Show All</option>
           <option value="showUnsold">Show Unsold Only</option>
           <option value="showSold">Show Sold Only</option>
         </select>
