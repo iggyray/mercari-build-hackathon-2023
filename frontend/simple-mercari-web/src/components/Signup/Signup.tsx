@@ -3,7 +3,11 @@ import { useNavigate } from "react-router-dom"
 import { toast } from "react-toastify"
 import { fetcher } from "../../helper"
 
-export const Signup = () => {
+interface Props {
+  toggleLogIn: () => void
+}
+
+export const Signup: React.FC<Props> = ({ toggleLogIn }) => {
   const [name, setName] = useState<string>()
   const [password, setPassword] = useState<string>()
 
@@ -23,7 +27,7 @@ export const Signup = () => {
       .then((user) => {
         toast.success(`New account with name: ${user.name} has been created!`)
         console.log("POST success:", user.name)
-        navigate("/")
+        toggleLogIn()
       })
       .catch((err) => {
         console.log(`POST error:`, err)
@@ -34,6 +38,7 @@ export const Signup = () => {
   return (
     <div>
       <div className="Signup">
+        <h1>Sign Up</h1>
         <label id="MerInputLabel">User Name</label>
         <input
           type="text"
