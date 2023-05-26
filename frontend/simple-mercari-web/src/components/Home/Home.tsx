@@ -25,7 +25,7 @@ export const Home = (props: HomeComponentProps) => {
   const [profile, setProfile] = useState<Item[]>([])
 
   const handleSearch = (value: string) => {
-    const searchEndpoint = `/search?keyword=${value}`
+    const searchEndpoint = `/search?name=${value}`
 
     searchItems(searchEndpoint)
   }
