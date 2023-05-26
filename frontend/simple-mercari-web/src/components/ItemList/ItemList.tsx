@@ -14,7 +14,7 @@ interface Prop {
 
 export const ItemList: React.FC<Prop> = (props) => {
   return (
-    <div>
+    <div className="ItemListWrapper">
       {props.items &&
         props.items.map((item) => {
           return <Item item={item} />

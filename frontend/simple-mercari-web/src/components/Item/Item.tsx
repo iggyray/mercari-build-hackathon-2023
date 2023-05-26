@@ -41,10 +41,10 @@ export const Item: React.FC<{ item: Item }> = ({ item }) => {
       <div className="ImgContainer">
         <img src={itemImage} alt={item.name} />
         <div className="PriceTag">
-          <p className="h6"> Price: {item.price}</p>
+          <p className="h6">¥ {item.price}</p>
         </div>
       </div>
-      <p className="h5">{item.name}</p>
+      <p className="h6">{item.name}</p>
     </div>
   )
 }

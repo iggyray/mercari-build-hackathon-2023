@@ -171,36 +171,31 @@ body {
 }
 
 .ItemDetail .ItemDetailWrapper .ItemDetailDesc .ItemCategory {
-  margin-top: -20px;
+  margin-top: -10px;
   font-style: italic;
 }
 
 .ItemListPage {
-  width: 80%;
+  width: 90%;
 }
 
 .ItemContainer {
-  width: 20%;
-  height: 20%;
-  margin-bottom: 2%;
+  width: 85%;
+  height: 85%;
 }
 
 .ItemContainer:hover {
   cursor: pointer;
 }
 
-.ItemContainer .ImgContainer {
-  position: relative;
-}
-
 .ItemContainer .PriceTag {
   position: absolute;
-  top: 75%;
+  top: 80%;
   left: 0%;
   padding-top: 3%;
   padding-right: 3%;
-  border-top-right-radius: 40%;
-  border-bottom-right-radius: 40%;
+  border-top-right-radius: 16px;
+  border-bottom-right-radius: 16px;
   background-color: rgba(0, 0, 0, 0.5);
   opacity: 0.8;
   color: #fff;
@@ -211,10 +206,26 @@ body {
   font-weight: bold;
 }
 
-.ItemContainer img {
+.ItemContainer .ImgContainer {
   width: 100%;
   height: 100%;
-  border-radius: 5%;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 7px;
+}
+
+.ImgContainer img {
+  width: 100%;
+  height: 100%;
+  border-radius: 1%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.ItemListWrapper {
+  display: grid;
+  grid-template-columns: repeat(5, 20%);
+  row-gap: 2%;
 }
 
 .ItemFilter {
@@ -240,7 +251,7 @@ body {
 }
 
 .UserProfile {
-  width: 100%;
+  width: 90%;
   display: flex;
   flex-direction: column;
   align-items: center;
