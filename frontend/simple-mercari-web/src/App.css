@@ -154,6 +154,27 @@ body {
   justify-content: left;
 }
 
+.ItemDetail .ItemDetailWrapper {
+  display: flex;
+  width: 80%;
+}
+
+.ItemDetail .ItemDetailWrapper img {
+  width: 50%;
+  height: 50%;
+  border-radius: 2%;
+}
+
+.ItemDetail .ItemDetailWrapper .ItemDetailDesc {
+  width: 45%;
+  margin-left: 5%;
+}
+
+.ItemDetail .ItemDetailWrapper .ItemDetailDesc .ItemCategory {
+  margin-top: -20px;
+  font-style: italic;
+}
+
 .ItemListPage {
   width: 80%;
 }
