@@ -40,11 +40,11 @@ type registerResponse struct {
 	Name string `json:"name"`
 }
 type getItemsResponse struct {
-	ID           int32  			`json:"id"`
-	Name         string 			`json:"name"`
-	Price        int64  			`json:"price"`
-	CategoryName string 			`json:"category_name"`
-	Status		 domain.ItemStatus	`json:"status"`
+	ID           int32             `json:"id"`
+	Name         string            `json:"name"`
+	Price        int64             `json:"price"`
+	CategoryName string            `json:"category_name"`
+	Status       domain.ItemStatus `json:"status"`
 }
 
 type getItemResponse struct {
@@ -87,7 +87,7 @@ type getBalanceResponse struct {
 }
 
 type loginRequest struct {
-	UserName   string  `json:"user_name"`
+	UserName string `json:"user_name"`
 	Password string `json:"password"`
 }
 
@@ -149,7 +149,7 @@ func (h *Handler) Register(c echo.Context) error {
 	}
 
 	if h.UserRepo.AddUser(c.Request().Context(), newUser) != nil {
-		
+
 		return echo.NewHTTPError(http.StatusInternalServerError, err)
 	}
 
@@ -359,11 +359,11 @@ func (h *Handler) SearchItems(c echo.Context) error {
 		for _, cat := range cats {
 			if cat.ID == item.CategoryID {
 				res = append(res, getItemsResponse{
-					ID: item.ID, 
-					Name: item.Name, 
-					Price: item.Price, 
-					CategoryName: cat.Name, 
-					Status: item.Status,
+					ID:           item.ID,
+					Name:         item.Name,
+					Price:        item.Price,
+					CategoryName: cat.Name,
+					Status:       item.Status,
 				})
 			}
 		}
@@ -459,7 +459,11 @@ func (h *Handler) AddBalance(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError, err)
 	}
 
-	if err := h.UserRepo.UpdateBalance(ctx, userID, user.Balance+req.Balance); err != nil {
+	newBalance := user.Balance + req.Balance
+	if newBalance < 0 {
+		return echo.NewHTTPError(http.StatusBadRequest, "The balance should be more than zero")
+	}
+	if err := h.UserRepo.UpdateBalance(ctx, userID, newBalance); err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err)
 	}
 

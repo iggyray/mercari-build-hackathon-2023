@@ -72,10 +72,13 @@ export const UserProfile: React.FC = () => {
         balance: addedbalance,
       }),
     })
-      .then((_) => window.location.reload())
+      .then((_) => {
+        toast.success(`New balance added!`)
+        window.location.reload()
+      })
       .catch((err) => {
         console.log(`POST error:`, err)
-        toast.error(err.message)
+        toast.error(err.message || "An error occurred");
       })
   }
 
