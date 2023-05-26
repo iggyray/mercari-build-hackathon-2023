@@ -31,6 +31,3 @@ CREATE TABLE IF NOT EXISTS status
     id   integer primary key,
     name varchar(50)
 );
-
--- Insert default categories
-INSERT INTO category (name) VALUES ("fashion"), ("electronics"), ("food"), ("health"), ("lifestyle");
