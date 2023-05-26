@@ -460,8 +460,8 @@ func (h *Handler) AddBalance(c echo.Context) error {
 	}
 
 	newBalance := user.Balance + req.Balance
-	if newBalance < 0 {
-		return echo.NewHTTPError(http.StatusBadRequest, "The balance should be more than zero")
+	if req.Balance < 0 {
+		return echo.NewHTTPError(http.StatusBadRequest, "The added balance should be more than zero")
 	}
 	if err := h.UserRepo.UpdateBalance(ctx, userID, newBalance); err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err)
