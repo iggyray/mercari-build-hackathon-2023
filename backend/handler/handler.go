@@ -147,26 +147,19 @@ func (h *Handler) Register(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError, err)
 	}
 
-	newUser := domain.User{Name: req.Name, Password: string(hash)}
-
-	if err := newUser.Validate(); err != nil {
-		fmt.Println(err)
-		return echo.NewHTTPError(http.StatusInternalServerError, err)
-	}
-
-	userID, err := h.UserRepo.AddUser(c.Request().Context(), newUser)
+	userID, err := h.UserRepo.AddUser(c.Request().Context(), domain.User{Name: req.Name, Password: string(hash)})
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err)
 	}
 
-	return c.JSON(http.StatusOK, registerResponse{ID: userID, Name: newUser.Name})
+	return c.JSON(http.StatusOK, registerResponse{ID: userID, Name: req.Name})
 }
 
 // deprecated
 func (h *Handler) Login(c echo.Context) error {
 	ctx := c.Request().Context()
 	// TODO: validation
-	// 
+	//
 	req := new(loginRequest)
 	if err := c.Bind(req); err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err)
