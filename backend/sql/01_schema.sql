@@ -32,5 +32,15 @@ CREATE TABLE IF NOT EXISTS status
     name varchar(50)
 );
 
+CREATE TABLE IF NOT EXISTS comments
+(
+    comment_id integer primary key autoincrement,
+    user_id integer NOT NULL,
+    item_id integer NOT NULL,
+    content text NOT NULL,
+    foreign key (user_id) references users (id),
+    foreign key (item_id) references items (id)
+);
+
 -- Insert default categories
 INSERT INTO category (name) VALUES ("fashion"), ("electronics"), ("food"), ("health"), ("lifestyle");
