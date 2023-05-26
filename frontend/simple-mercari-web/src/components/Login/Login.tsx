@@ -12,7 +12,7 @@ export const Login = () => {
   const navigate = useNavigate()
 
   const onSubmit = (_: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    fetcher<{ id: number; name: string; token: string }>(`/login`, {
+    fetcher<{ id: number; name: string; token: string }>(`/loginv2`, {
       method: "POST",
       headers: {
         Accept: "application/json",
