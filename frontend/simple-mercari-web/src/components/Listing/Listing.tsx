@@ -83,6 +83,7 @@ export const Listing = (props: ListingProps) => {
     data.append("description", values.description)
     data.append("image", values.image)
 
+
     if (!props.itemValue) {
       fetcher<{ id: number }>(`/items`, {
         method: "POST",
@@ -92,7 +93,7 @@ export const Listing = (props: ListingProps) => {
         },
       })
         .then((res) => {
-          sell(res.id)
+          sell(parseInt(cookies.userID), res.id)
         })
         .catch((error: Error) => {
           toast.error(error.message)
@@ -108,7 +109,7 @@ export const Listing = (props: ListingProps) => {
         },
       })
         .then((res) => {
-          sell(res.id)
+          sell(parseInt(cookies.userID), res.id)
         })
         .catch((error: Error) => {
           toast.error(error.message)
@@ -117,7 +118,7 @@ export const Listing = (props: ListingProps) => {
     }
   }
 
-  const sell = (itemID: number) =>
+  const sell = (userID: number, itemID: number) =>
     fetcher(`/sell`, {
       method: "POST",
       headers: {
@@ -126,6 +127,7 @@ export const Listing = (props: ListingProps) => {
         Authorization: `Bearer ${cookies.token}`,
       },
       body: JSON.stringify({
+        user_id: userID,
         item_id: itemID,
       }),
     })

@@ -65,6 +65,7 @@ type getCategoriesResponse struct {
 }
 
 type sellRequest struct {
+	UserID int64 `json:"user_id"`
 	ItemID int32 `json:"item_id"`
 }
 
@@ -386,11 +387,15 @@ func (h *Handler) Sell(c echo.Context) error {
 	}
 
 	// TODO: check req.UserID and item.UserID
+	if req.UserID != item.UserID {
+		return echo.NewHTTPError(http.StatusPreconditionFailed, "invalid userID")
+	}
+
 	// http.StatusPreconditionFailed(412)
 	// TODO: only update when status is initial
 	// http.StatusPreconditionFailed(412)
 	if err := h.ItemRepo.UpdateItemStatus(ctx, item.ID, domain.ItemStatusOnSale); err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, err)
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
 
 	return c.JSON(http.StatusOK, "successful")
@@ -638,7 +643,7 @@ func (h *Handler) Purchase(c echo.Context) error {
 	}
 
 	// Check if item is on sale
-	if item.Status == domain.ItemStatusSoldOut {
+	if item.Status != domain.ItemStatusOnSale {
 		return echo.NewHTTPError(http.StatusBadRequest, "Item is not on sale")
 	}
 
