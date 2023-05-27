@@ -75,6 +75,7 @@ export const Listing: React.FC = () => {
       },
     })
       .then((res) => {
+
         sell(parseInt(cookies.userID), res.id)
       })
       .catch((error: Error) => {
@@ -91,6 +92,7 @@ export const Listing: React.FC = () => {
         "Content-Type": "application/json",
         Authorization: `Bearer ${cookies.token}`,
       },
+
       body: JSON.stringify({
         user_id: userID,
         item_id: itemID,
