@@ -80,7 +80,7 @@ export const UserProfile: React.FC = () => {
         const { message } = await err.json()
         console.log(`POST error:`, err)
 
-        toast.error(message || "An error occurred");
+        toast.error(message || "An error occurred")
       })
   }
 
@@ -88,29 +88,27 @@ export const UserProfile: React.FC = () => {
     <MerComponent>
       <div className="UserProfile">
         <div>
-          <div>
-            <h2>
-              <span>Balance: {balance}</span>
-            </h2>
-            <input
-              type="number"
-              name="balance"
-              id="MerTextInput"
-              placeholder="0"
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                setAddedBalance(Number(e.target.value))
-              }}
-              required
-            />
-            <button onClick={onBalanceSubmit} id="MerButton">
-              Add balance
-            </button>
-          </div>
+          <h2>
+            <span>Balance: {balance}</span>
+          </h2>
+          <input
+            type="number"
+            name="balance"
+            id="MerTextInput"
+            placeholder="0"
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+              setAddedBalance(Number(e.target.value))
+            }}
+            required
+          />
+          <button onClick={onBalanceSubmit} id="MerButton">
+            Add balance
+          </button>
+        </div>
 
-          <div>
-            <h2>Item List</h2>
-            {<ItemList items={items} />}
-          </div>
+        <div>
+          <h2>Item List</h2>
+          {<ItemList items={items} />}
         </div>
       </div>
     </MerComponent>

@@ -1,9 +1,7 @@
-import { Login } from "../Login"
-import { Signup } from "../Signup"
 import { ItemList } from "../ItemList"
 import { useCookies } from "react-cookie"
 import { MerComponent } from "../MerComponent"
-import { useEffect, useState } from "react"
+import { ChangeEvent, useEffect, useState } from "react"
 import { toast } from "react-toastify"
 import { fetcher } from "../../helper"
 import "react-toastify/dist/ReactToastify.css"
@@ -19,15 +17,23 @@ interface HomeComponentProps {
   searchValue: string
 }
 
+type ShowItem = "showAll" | "showSold" | "showUnsold"
+
 export const Home = (props: HomeComponentProps) => {
   const [cookies] = useCookies(["userID", "userName", "token"])
   const [items, setItems] = useState<Item[]>([])
-  const [profile, setProfile] = useState<Item[]>([])
+  const [allItemsReference, setAllItemsReference] = useState<Item[]>([])
+  const [itemFilter, setItemFilter] = useState<ShowItem>("showAll")
 
   const handleSearch = (value: string) => {
-    const searchEndpoint = `/search?keyword=${value}`
+    const searchEndpoint = `/search?name=${value}`
 
     searchItems(searchEndpoint)
+  }
+
+  const handleItemFilterChange = (event: ChangeEvent<HTMLSelectElement>) => {
+    const value = event.target.value as ShowItem
+    setItemFilter(value)
   }
 
   const fetchItems = () => {
@@ -40,6 +46,7 @@ export const Home = (props: HomeComponentProps) => {
     })
       .then((data) => {
         setItems(data)
+        setAllItemsReference(data)
       })
       .catch((err) => {
         toast.error(err.message)
@@ -56,10 +63,28 @@ export const Home = (props: HomeComponentProps) => {
     })
       .then((data) => {
         setItems(data)
+        setAllItemsReference(data)
       })
       .catch((err) => {
         toast.error(err.message)
       })
+  }
+
+  const filterItems = (itemFilter: ShowItem, items: Item[]) => {
+    const localItems = items
+    switch (itemFilter) {
+      case "showAll":
+        setItems(localItems)
+        break
+      case "showUnsold":
+        setItems(localItems.filter((item) => item.status === 2))
+        console.log(localItems)
+        break
+      case "showSold":
+        setItems(localItems.filter((item) => item.status === 3))
+        console.log(localItems)
+        break
+    }
   }
 
   useEffect(() => {
@@ -67,22 +92,32 @@ export const Home = (props: HomeComponentProps) => {
   }, [])
 
   useEffect(() => {
+    filterItems(itemFilter, allItemsReference)
+  }, [itemFilter, allItemsReference])
+
+  useEffect(() => {
     handleSearch(props.searchValue)
   }, [props.searchValue])
-
-  const [isLogInPage, setIsLogInPage] = useState(true)
-
-
 
   const itemListPage = (
     <MerComponent>
       <div className="ItemListPage">
-        {cookies.token ||
-          cookies.userID ? <span>
-          <p>Logined User: {cookies.userName}</p>
-        </span> : null}
-        {props.searchValue ?
-          <p>Showing search results for: {props.searchValue}</p> : null}
+        {cookies.token || cookies.userID ? (
+          <span>
+            <p>Logined User: {cookies.userName}</p>
+          </span>
+        ) : null}
+        {props.searchValue ? (
+          <p>Showing search results for: {props.searchValue}</p>
+        ) : null}
+        <select
+          className="form-control ItemFilter"
+          onChange={handleItemFilterChange}
+        >
+          <option value="showAll">Show All</option>
+          <option value="showUnsold">Show Unsold Only</option>
+          <option value="showSold">Show Sold Only</option>
+        </select>
         <ItemList items={items} />
       </div>
     </MerComponent>

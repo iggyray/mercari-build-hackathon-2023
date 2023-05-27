@@ -41,6 +41,15 @@
   appearance: none;
 }
 
+.dropdown-toggle::before,
+.dropdown-toggle::after {
+  border: none;
+  content: none;
+}
+
+.dropdown-item:hover {
+  background-color: #3D3D3D !important;
+}
 
 #search-button {
   box-sizing: border-box;

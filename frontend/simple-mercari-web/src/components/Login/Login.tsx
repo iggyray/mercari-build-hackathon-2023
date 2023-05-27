@@ -12,7 +12,7 @@ export const Login = () => {
   const navigate = useNavigate()
 
   const onSubmit = (_: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    fetcher<{ id: number; name: string; token: string }>(`/login`, {
+    fetcher<{ id: number; name: string; token: string }>(`/loginv2`, {
       method: "POST",
       headers: {
         Accept: "application/json",
@@ -24,7 +24,7 @@ export const Login = () => {
       }),
     })
       .then((user) => {
-        toast.success("Signed in!")
+        toast.success(`Welcome back ${user.name}!`)
         console.log("POST success:", user.name)
         setCookie("userID", user.id)
         setCookie("userName", user.name)
@@ -40,6 +40,7 @@ export const Login = () => {
   return (
     <div>
       <div className="Login">
+        <h1>Log In</h1>
         <label id="MerInputLabel">User Name</label>
         <input
           type="text"

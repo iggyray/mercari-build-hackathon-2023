@@ -37,6 +37,7 @@ type registerRequest struct {
 }
 
 type registerResponse struct {
+	ID   int64  `json:"id"`
 	Name string `json:"name"`
 }
 type getItemsResponse struct {
@@ -87,6 +88,11 @@ type getBalanceResponse struct {
 }
 
 type loginRequest struct {
+	UserID   int64  `json:"user_id"`
+	Password string `json:"password"`
+}
+
+type loginV2Request struct {
 	UserName string `json:"user_name"`
 	Password string `json:"password"`
 }
@@ -162,26 +168,63 @@ func (h *Handler) Register(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError, err)
 	}
 
-	newUser := domain.User{Name: req.Name, Password: string(hash)}
-
-	if err := newUser.Validate(); err != nil {
-		fmt.Println(err)
+	userID, err := h.UserRepo.AddUser(c.Request().Context(), domain.User{Name: req.Name, Password: string(hash)})
+	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err)
 	}
 
-	if h.UserRepo.AddUser(c.Request().Context(), newUser) != nil {
-
-		return echo.NewHTTPError(http.StatusInternalServerError, err)
-	}
-
-	return c.JSON(http.StatusOK, registerResponse{Name: newUser.Name})
+	return c.JSON(http.StatusOK, registerResponse{ID: userID, Name: req.Name})
 }
 
+// deprecated
 func (h *Handler) Login(c echo.Context) error {
 	ctx := c.Request().Context()
 	// TODO: validation
-	// http.StatusBadRequest(400)
+	//
 	req := new(loginRequest)
+	if err := c.Bind(req); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err)
+	}
+
+	user, err := h.UserRepo.GetUser(ctx, req.UserID)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err)
+	}
+
+	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.Password)); err != nil {
+		if err == bcrypt.ErrMismatchedHashAndPassword {
+			return echo.NewHTTPError(http.StatusUnauthorized, err)
+		}
+		return echo.NewHTTPError(http.StatusBadRequest, err)
+	}
+
+	// Set custom claims
+	claims := &JwtCustomClaims{
+		req.UserID,
+		jwt.RegisteredClaims{
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour * 72)),
+		},
+	}
+	// Create token with claims
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	// Generate encoded token and send it as response.
+	encodedToken, err := token.SignedString([]byte(GetSecret()))
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err)
+	}
+
+	return c.JSON(http.StatusOK, loginResponse{
+		ID:    user.ID,
+		Name:  user.Name,
+		Token: encodedToken,
+	})
+}
+
+func (h *Handler) LoginV2(c echo.Context) error {
+	ctx := c.Request().Context()
+	// TODO: validation
+	// http.StatusBadRequest(400)
+	req := new(loginV2Request)
 	if err := c.Bind(req); err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err)
 	}
@@ -363,7 +406,7 @@ func (h *Handler) GetItem(c echo.Context) error {
 func (h *Handler) SearchItems(c echo.Context) error {
 	ctx := c.Request().Context()
 
-	keyword := c.QueryParam("keyword")
+	keyword := c.QueryParam("name")
 
 	items, err := h.ItemRepo.GetItemsByKeyword(ctx, keyword)
 

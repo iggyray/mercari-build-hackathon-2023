@@ -8,7 +8,7 @@ import (
 )
 
 type UserRepository interface {
-	AddUser(ctx context.Context, user domain.User) (error)
+	AddUser(ctx context.Context, user domain.User) (int64, error)
 	GetUser(ctx context.Context, id int64) (domain.User, error)
 	GetUserByName(ctx context.Context, name string) (domain.User, error)
 	UpdateBalance(ctx context.Context, id int64, balance int64) error
@@ -22,13 +22,16 @@ func NewUserRepository(db *sql.DB) UserRepository {
 	return &UserDBRepository{DB: db}
 }
 
-func (r *UserDBRepository) AddUser(ctx context.Context, user domain.User) (error) {
+func (r *UserDBRepository) AddUser(ctx context.Context, user domain.User) (int64, error) {
 	if _, err := r.ExecContext(ctx, "INSERT INTO users (name, password) VALUES (?, ?)", user.Name, user.Password); err != nil {
-		return err
+		return 0, err
 	}
 	// TODO: if other insert query is executed at the same time, it might return wrong id
 	// http.StatusConflict(409) 既に同じIDがあった場合
-	return nil
+	row := r.QueryRowContext(ctx, "SELECT id FROM users WHERE rowid = LAST_INSERT_ROWID()")
+
+	var id int64
+	return id, row.Scan(&id)
 }
 
 func (r *UserDBRepository) GetUser(ctx context.Context, id int64) (domain.User, error) {

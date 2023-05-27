@@ -42,6 +42,3 @@ CREATE TABLE IF NOT EXISTS comments
     foreign key (user_id) references users (id),
     foreign key (item_id) references items (id)
 );
-
--- Insert default categories
-INSERT INTO category (name) VALUES ("fashion"), ("electronics"), ("food"), ("health"), ("lifestyle");
