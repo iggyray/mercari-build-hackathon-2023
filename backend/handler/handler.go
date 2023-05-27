@@ -320,6 +320,56 @@ func (h *Handler) AddItem(c echo.Context) error {
 	return c.JSON(http.StatusOK, addItemResponse{ID: int64(item.ID)})
 }
 
+// Update item
+func (h *Handler) UpdateItem(c echo.Context) error {
+
+	req := new(addItemRequest)
+	if err := c.Bind(req); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err)
+	}
+	itemID, err := strconv.Atoi(c.Param("itemID"))
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err)
+	}
+
+	userID, err := getUserID(c)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusUnauthorized, err)
+	}
+	file, err := c.FormFile("image")
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err)
+	}
+
+	src, err := file.Open()
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err)
+	}
+	defer src.Close()
+
+	var dest []byte
+	blob := bytes.NewBuffer(dest)
+	// TODO: pass very big file
+	// http.StatusBadRequest(400)
+	if _, err := io.Copy(blob, src); err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err)
+	}
+
+	err = h.ItemRepo.UpdateItem(c.Request().Context(), int32(itemID), domain.Item{
+		Name:        req.Name,
+		CategoryID:  req.CategoryID,
+		UserID:      userID,
+		Price:       req.Price,
+		Description: req.Description,
+		Image:       blob.Bytes(),
+		Status:      domain.ItemStatusInitial,
+	})
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err)
+	}
+	return c.JSON(http.StatusOK, addItemResponse{ID: int64(itemID)})
+}
+
 func (h *Handler) Sell(c echo.Context) error {
 	ctx := c.Request().Context()
 	req := new(sellRequest)
@@ -567,12 +617,11 @@ func (h *Handler) Purchase(c echo.Context) error {
 	}
 
 	// TODO: update only when item status is on sale
+	// Check if item is onsale
+
 	// http.StatusPreconditionFailed(412)
 
 	// オーバーフローしていると。ここのint32(itemID)がバグって正常に処理ができないはず
-	if err := h.ItemRepo.UpdateItemStatus(ctx, int32(itemID), domain.ItemStatusSoldOut); err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, err)
-	}
 
 	user, err := h.UserRepo.GetUser(ctx, userID)
 	// TODO: not found handling
@@ -588,9 +637,29 @@ func (h *Handler) Purchase(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError, err)
 	}
 
+	// Check if item is on sale
+	if item.Status == domain.ItemStatusSoldOut {
+		return echo.NewHTTPError(http.StatusBadRequest, "Item is not on sale")
+	}
+
+	// Check if balance is enough
+	if user.Balance < item.Price {
+		return echo.NewHTTPError(http.StatusBadRequest, "Balance is not enough.")
+	}
+
+	// Check if item is own by the buyer
+	if userID == item.UserID {
+		return echo.NewHTTPError(http.StatusBadRequest, "Cannot buy own item")
+	}
+
+	if err := h.ItemRepo.UpdateItemStatus(ctx, int32(itemID), domain.ItemStatusSoldOut); err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+	}
+
 	// TODO: if it is fail here, item status is still sold
 	// TODO: balance consistency
 	// TODO: not to buy own items. 自身の商品を買おうとしていたら、http.StatusPreconditionFailed(412)
+
 	if err := h.UserRepo.UpdateBalance(ctx, userID, user.Balance-item.Price); err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err)
 	}
