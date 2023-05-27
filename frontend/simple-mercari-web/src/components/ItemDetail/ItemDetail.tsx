@@ -79,9 +79,11 @@ export const ItemDetail = () => {
         }),
       })
         .then((_) => window.location.reload())
-        .catch((err) => {
+        .catch(async (err) => {
+          const { message } = await err.json()
           console.log(`POST error:`, err)
-          toast.error(err.message)
+
+          toast.error(message || "An error occurred")
         })
     } else {
       navigate("/login")
