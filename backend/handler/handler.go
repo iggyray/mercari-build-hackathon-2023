@@ -66,6 +66,7 @@ type getCategoriesResponse struct {
 
 type sellRequest struct {
 	UserID int64 `json:"user_id"`
+	UserID int64 `json:"user_id"`
 	ItemID int32 `json:"item_id"`
 }
 
@@ -105,29 +106,29 @@ type loginResponse struct {
 }
 
 type getCommentResponse struct {
-	CommentId	int64	`json:"comment_id"`
-	UserId		int64	`json:"user_id"`
-	ItemId		int32	`json:"item_id"`
-	Content		string	`json:"content"`
-	CreatedAt	string	`json:"created_at"`
+	CommentId int64  `json:"comment_id"`
+	UserId    int64  `json:"user_id"`
+	ItemId    int32  `json:"item_id"`
+	Content   string `json:"content"`
+	CreatedAt string `json:"created_at"`
 }
 
 type addCommentRequest struct {
-	Content		string	`json:"content"`
+	Content string `json:"content"`
 }
 
 type addCommentResponse struct {
-	CommentId	int64	`json:"comment_id"`
-	UserId		int64	`json:"user_id"`
-	ItemId		int32	`json:"item_id"`
-	Content		string	`json:"content"`
-	CreatedAt	string	`json:"created_at"`
+	CommentId int64  `json:"comment_id"`
+	UserId    int64  `json:"user_id"`
+	ItemId    int32  `json:"item_id"`
+	Content   string `json:"content"`
+	CreatedAt string `json:"created_at"`
 }
 
 type Handler struct {
-	DB       *sql.DB
-	UserRepo db.UserRepository
-	ItemRepo db.ItemRepository
+	DB          *sql.DB
+	UserRepo    db.UserRepository
+	ItemRepo    db.ItemRepository
 	CommentRepo db.CommentRepository
 }
 
@@ -387,9 +388,9 @@ func (h *Handler) Sell(c echo.Context) error {
 	}
 
 	// TODO: check req.UserID and item.UserID
-	// if req.UserID != item.UserID {
-	// 	return echo.NewHTTPError(http.StatusPreconditionFailed, "invalid userID")
-	// }
+	if req.UserID != item.UserID {
+		return echo.NewHTTPError(http.StatusPreconditionFailed, "invalid userID")
+	}
 
 	// http.StatusPreconditionFailed(412)
 	// TODO: only update when status is initial
@@ -749,7 +750,7 @@ func (h *Handler) AddComment(c echo.Context) error {
 	if err != nil {
 		return echo.NewHTTPError(http.StatusUnauthorized, err)
 	}
-	
+
 	itemID, err := strconv.Atoi(c.Param("itemID"))
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err)
@@ -762,9 +763,9 @@ func (h *Handler) AddComment(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, addCommentResponse{
 		CommentId: comment.CommentID,
-		UserId: comment.UserID,
-		ItemId: comment.ItemID,
-		Content: comment.Content,
+		UserId:    comment.UserID,
+		ItemId:    comment.ItemID,
+		Content:   comment.Content,
 		CreatedAt: comment.CreatedAt,
 	})
 }
