@@ -66,7 +66,6 @@ type getCategoriesResponse struct {
 
 type sellRequest struct {
 	UserID int64 `json:"user_id"`
-	UserID int64 `json:"user_id"`
 	ItemID int32 `json:"item_id"`
 }
 
