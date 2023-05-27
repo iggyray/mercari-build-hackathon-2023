@@ -621,14 +621,14 @@ func (h *Handler) Purchase(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, "Item is not on sale")
 	}
 
-	// Check if item is own by the buyer
-	if userID == item.UserID {
-		return echo.NewHTTPError(http.StatusBadRequest, "Cannot buy own item")
-	}
-
 	// Check if balance is enough
 	if user.Balance < item.Price {
 		return echo.NewHTTPError(http.StatusBadRequest, "Balance is not enough.")
+	}
+
+	// Check if item is own by the buyer
+	if userID == item.UserID {
+		return echo.NewHTTPError(http.StatusBadRequest, "Cannot buy own item")
 	}
 
 	if err := h.ItemRepo.UpdateItemStatus(ctx, int32(itemID), domain.ItemStatusSoldOut); err != nil {
