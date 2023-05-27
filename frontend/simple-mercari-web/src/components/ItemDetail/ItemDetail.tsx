@@ -4,6 +4,7 @@ import { useCookies } from "react-cookie"
 import { MerComponent } from "../MerComponent"
 import { toast } from "react-toastify"
 import { fetcher, fetcherBlob } from "../../helper"
+import { CommentBoard, CommentType } from "../CommentBoard/CommentBoard"
 
 const ItemStatus = {
   ItemStatusInitial: 1,
@@ -11,7 +12,7 @@ const ItemStatus = {
   ItemStatusSoldOut: 3,
 } as const
 
-type ItemStatus = (typeof ItemStatus)[keyof typeof ItemStatus]
+type ItemStatusType = (typeof ItemStatus)[keyof typeof ItemStatus]
 
 interface Item {
   id: number
@@ -20,7 +21,7 @@ interface Item {
   category_name: string
   user_id: number
   price: number
-  status: ItemStatus
+  status: ItemStatusType
   description: string
 }
 
@@ -30,6 +31,26 @@ export const ItemDetail = () => {
   const [item, setItem] = useState<Item>()
   const [itemImage, setItemImage] = useState<Blob>()
   const [cookies] = useCookies(["token", "userID"])
+
+  const handleNewComment = (comment: string) => {
+    console.log("FROM DETAIL")
+    console.log(comment)
+    fetcher<{ comment: CommentType }>(`/items/${params.id}/comments`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${cookies.token}`,
+      },
+      body: JSON.stringify({
+        content: comment,
+      }),
+    }).catch((error: Error) => {
+      toast.error(error.message)
+      console.error("POST error:", error)
+    })
+  }
+  const [comments, setComments] = useState<CommentType[]>([])
 
   const fetchItem = () => {
     fetcher<Item>(`/items/${params.id}`, {
@@ -65,6 +86,24 @@ export const ItemDetail = () => {
       })
   }
 
+  const fetchComments = () => {
+    fetcher<CommentType[]>(`/items/${params.id}/comments`, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => {
+        console.log("comments:", res)
+        setComments(res)
+      })
+      .catch((err) => {
+        console.log(`GET error:`, err)
+        toast.error(err.message)
+      })
+  }
+
   const onSubmit = (_: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     if (cookies.token && cookies.userID) {
       fetcher<Item[]>(`/purchase/${params.id}`, {
@@ -92,6 +131,7 @@ export const ItemDetail = () => {
 
   useEffect(() => {
     fetchItem()
+    fetchComments()
   }, [])
 
   return (
@@ -123,6 +163,7 @@ export const ItemDetail = () => {
                   Purchase
                 </button>
               )}
+              <CommentBoard onComment={handleNewComment} comments={comments} />
             </div>
           </div>
         )}
