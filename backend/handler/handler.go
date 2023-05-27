@@ -616,7 +616,7 @@ func (h *Handler) Purchase(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError, err)
 	}
 
-	// CHeck if item is on sale
+	// Check if item is on sale
 	if item.Status == domain.ItemStatusSoldOut {
 		return echo.NewHTTPError(http.StatusBadRequest, "Item is not on sale")
 	}
@@ -632,7 +632,7 @@ func (h *Handler) Purchase(c echo.Context) error {
 	}
 
 	if err := h.ItemRepo.UpdateItemStatus(ctx, int32(itemID), domain.ItemStatusSoldOut); err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, err)
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
 
 	// TODO: if it is fail here, item status is still sold
