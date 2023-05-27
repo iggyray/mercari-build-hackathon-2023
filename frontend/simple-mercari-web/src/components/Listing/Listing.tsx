@@ -75,7 +75,7 @@ export const Listing: React.FC = () => {
       },
     })
       .then((res) => {
-        sell(res.id)
+        sell(parseInt(cookies.userID), res.id)
       })
       .catch((error: Error) => {
         toast.error(error.message)
@@ -83,7 +83,7 @@ export const Listing: React.FC = () => {
       })
   }
 
-  const sell = (itemID: number) =>
+  const sell = (userID: number, itemID: number) =>
     fetcher(`/sell`, {
       method: "POST",
       headers: {
@@ -92,6 +92,7 @@ export const Listing: React.FC = () => {
         Authorization: `Bearer ${cookies.token}`,
       },
       body: JSON.stringify({
+        user_id: userID,
         item_id: itemID,
       }),
     })
