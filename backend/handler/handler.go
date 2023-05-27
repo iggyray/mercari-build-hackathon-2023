@@ -103,10 +103,31 @@ type loginResponse struct {
 	Token string `json:"token"`
 }
 
+type getCommentResponse struct {
+	CommentId	int64	`json:"comment_id"`
+	UserId		int64	`json:"user_id"`
+	ItemId		int32	`json:"item_id"`
+	Content		string	`json:"content"`
+	CreatedAt	string	`json:"created_at"`
+}
+
+type addCommentRequest struct {
+	Content		string	`json:"content"`
+}
+
+type addCommentResponse struct {
+	CommentId	int64	`json:"comment_id"`
+	UserId		int64	`json:"user_id"`
+	ItemId		int32	`json:"item_id"`
+	Content		string	`json:"content"`
+	CreatedAt	string	`json:"created_at"`
+}
+
 type Handler struct {
 	DB       *sql.DB
 	UserRepo db.UserRepository
 	ItemRepo db.ItemRepository
+	CommentRepo db.CommentRepository
 }
 
 func GetSecret() string {
@@ -678,4 +699,64 @@ func getEnv(key string, defaultValue string) string {
 		return defaultValue
 	}
 	return value
+}
+
+func (h *Handler) GetCommentsByItemId(c echo.Context) error {
+	ctx := c.Request().Context()
+
+	itemID, err := strconv.Atoi(c.Param("itemID"))
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err)
+	}
+
+	comments, err := h.CommentRepo.GetCommentsByItemId(ctx, int32(itemID))
+	// TODO: not found handling
+	// http.StatusNotFound(404)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusNotFound, err)
+	}
+
+	var res []getCommentResponse
+	for _, comment := range comments {
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, err)
+		}
+		res = append(res, getCommentResponse{CommentId: comment.CommentID, UserId: comment.UserID, ItemId: comment.ItemID, Content: comment.Content, CreatedAt: comment.CreatedAt})
+	}
+
+	return c.JSON(http.StatusOK, res)
+}
+
+func (h *Handler) AddComment(c echo.Context) error {
+	// TODO: validation
+	// http.StatusBadRequest(400)
+	ctx := c.Request().Context()
+
+	req := new(addCommentRequest)
+	if err := c.Bind(req); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err)
+	}
+
+	userID, err := getUserID(c)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusUnauthorized, err)
+	}
+	
+	itemID, err := strconv.Atoi(c.Param("itemID"))
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err)
+	}
+
+	comment, err := h.CommentRepo.AddComment(ctx, domain.Comment{UserID: userID, ItemID: int32(itemID), Content: req.Content})
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err)
+	}
+
+	return c.JSON(http.StatusOK, addCommentResponse{
+		CommentId: comment.CommentID,
+		UserId: comment.UserID,
+		ItemId: comment.ItemID,
+		Content: comment.Content,
+		CreatedAt: comment.CreatedAt,
+	})
 }
