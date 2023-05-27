@@ -11,7 +11,9 @@ const ItemStatus = {
   ItemStatusSoldOut: 3,
 } as const
 
-type ItemStatus = (typeof ItemStatus)[keyof typeof ItemStatus]
+type ItemStatusType = (typeof ItemStatus)[keyof typeof ItemStatus]
+
+type ButtonType = "purchase" | "sold" | "edit"
 
 interface Item {
   id: number
@@ -20,7 +22,7 @@ interface Item {
   category_name: string
   user_id: number
   price: number
-  status: ItemStatus
+  status: ItemStatusType
   description: string
 }
 
@@ -90,9 +92,25 @@ export const ItemDetail = () => {
     }
   }
 
+  const [buttonType, setButtonType] = useState<ButtonType>("purchase")
+
+  const getButtonType = (): void => {
+    if (item?.status === ItemStatus.ItemStatusSoldOut) {
+      setButtonType("sold")
+    } else if (item?.user_id.toString() === cookies.userID) {
+      setButtonType("edit")
+    } else {
+      setButtonType("purchase")
+    }
+  }
+
   useEffect(() => {
     fetchItem()
   }, [])
+
+  useEffect(() => {
+    getButtonType()
+  }, [item])
 
   return (
     <div className="ItemDetail">
@@ -110,7 +128,7 @@ export const ItemDetail = () => {
               <h3>¥ {item.price}</h3>
               <h4>Description:</h4>
               <p>{item.description}</p>
-              {item.status == ItemStatus.ItemStatusSoldOut ? (
+              {buttonType === "sold" && (
                 <button
                   disabled={true}
                   onClick={onSubmit}
@@ -118,7 +136,11 @@ export const ItemDetail = () => {
                 >
                   SoldOut
                 </button>
-              ) : (
+              )}
+              {buttonType === "edit" && (
+                <button id="MerButton">Edit Listing</button>
+              )}
+              {buttonType === "purchase" && (
                 <button onClick={onSubmit} id="MerButton">
                   Purchase
                 </button>
