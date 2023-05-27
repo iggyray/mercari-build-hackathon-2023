@@ -282,27 +282,17 @@ body {
 }
 
 .CommentBoard {
-  display: grid;
   width: 100%;
-  height: 300px;
-  min-height: 150px;
-  min-height: 150px;
-  max-height: 300px;
-  grid-template-columns: 100%;
-  align-items: flex-start;
-  overflow: scroll;
 }
 
 .CommentWrapper {
   width: 100%;
-  padding: 5px;
-  display: grid;
+  margin-bottom: 10px;
 }
 
 .CommentBubble {
   width: 100%;
   background-color: #575757;
-  padding-top: 10px;
-  padding-left: 10px;
+  padding: 10px;
   border-radius: 7px;
 }

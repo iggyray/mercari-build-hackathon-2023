@@ -6,7 +6,7 @@ interface CommentProps {
 
 export const Comment = ({ comment }: CommentProps) => {
   return (
-    <div className="CommentWrapper" id="search-group">
+    <div className="CommentWrapper">
       <h6>
         <b>User: {comment.user_id}</b>
       </h6>

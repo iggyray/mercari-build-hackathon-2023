@@ -32,7 +32,7 @@ export const CommentBoard = ({ onComment, comments }: CommentBoardProps) => {
       <h4>Comments</h4>
       <div className="CommentBoardWrapper">
         {comments && (
-          <div className="CommentBoard">
+          <div className="CommentBoard flex-column">
             {comments.map((comment) => {
               return <Comment comment={comment} />
             })}
