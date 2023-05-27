@@ -78,11 +78,9 @@ export const Home = (props: HomeComponentProps) => {
         break
       case "showUnsold":
         setItems(localItems.filter((item) => item.status === 2))
-        console.log(localItems)
         break
       case "showSold":
         setItems(localItems.filter((item) => item.status === 3))
-        console.log(localItems)
         break
     }
   }
