@@ -84,6 +84,7 @@ export const Listing = (props: ListingProps) => {
     data.append("image", values.image)
 
 
+
     if (!props.itemValue) {
       fetcher<{ id: number }>(`/items`, {
         method: "POST",
@@ -126,6 +127,7 @@ export const Listing = (props: ListingProps) => {
         "Content-Type": "application/json",
         Authorization: `Bearer ${cookies.token}`,
       },
+
       body: JSON.stringify({
         user_id: userID,
         item_id: itemID,
