@@ -387,9 +387,9 @@ func (h *Handler) Sell(c echo.Context) error {
 	}
 
 	// TODO: check req.UserID and item.UserID
-	if req.UserID != item.UserID {
-		return echo.NewHTTPError(http.StatusPreconditionFailed, "invalid userID")
-	}
+	// if req.UserID != item.UserID {
+	// 	return echo.NewHTTPError(http.StatusPreconditionFailed, "invalid userID")
+	// }
 
 	// http.StatusPreconditionFailed(412)
 	// TODO: only update when status is initial
