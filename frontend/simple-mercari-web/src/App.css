@@ -152,6 +152,7 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: left;
+  margin-bottom: 50px;
 }
 
 .ItemDetail .ItemDetailWrapper {
