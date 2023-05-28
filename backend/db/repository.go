@@ -3,6 +3,7 @@ package db
 import (
 	"context"
 	"database/sql"
+	"io/ioutil"
 
 	"github.com/iggyray/mecari-build-hackathon-2023/backend/domain"
 )
@@ -150,7 +151,15 @@ func (r *ItemDBRepository) GetItem(ctx context.Context, id int32) (domain.Item, 
 func (r *ItemDBRepository) GetItemImage(ctx context.Context, id int32) ([]byte, error) {
 	row := r.QueryRowContext(ctx, "SELECT image FROM items WHERE id = ?", id)
 	var image []byte
-	return image, row.Scan(&image)
+	err := row.Scan(&image)
+	if len(image) == 0 {
+		image, err = ioutil.ReadFile(".handler/default-image.jpg")
+		if err != nil {
+			return nil, err
+		}
+	}
+	// If no error, return the fetched image
+	return image, err
 }
 
 func (r *ItemDBRepository) GetAllItems(ctx context.Context) ([]domain.Item, error) {

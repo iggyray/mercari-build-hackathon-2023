@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"net/http"
 	"os"
 	"strconv"
@@ -307,7 +308,7 @@ func (h *Handler) AddItem(c echo.Context) error {
 	// http.StatusBadRequest(400)
 	const MaxImageSize = 1 << 20 // 1 MB
 	if file.Size > MaxImageSize {
-		return echo.NewHTTPError(http.StatusBadRequest, "Image size is too big")
+		return echo.NewHTTPError(http.StatusBadRequest, "Please upload image less than 1MB")
 	}
 
 	var dest []byte
@@ -372,6 +373,10 @@ func (h *Handler) UpdateItem(c echo.Context) error {
 	blob := bytes.NewBuffer(dest)
 	// TODO: pass very big file
 	// http.StatusBadRequest(400)
+	const MaxImageSize = 1 << 20 // 1 MB
+	if file.Size > MaxImageSize {
+		return echo.NewHTTPError(http.StatusBadRequest, "Please upload image less than 1MB")
+	}
 	if _, err := io.Copy(blob, src); err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err)
 	}
@@ -575,7 +580,12 @@ func (h *Handler) GetImage(c echo.Context) error {
 	// オーバーフローしていると。ここのint32(itemID)がバグって正常に処理ができないはず
 	data, err := h.ItemRepo.GetItemImage(ctx, int32(itemID))
 	if err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, err)
+		// return placeholder image
+		placeholderData, err := ioutil.ReadFile("./handler/default-image.jpg")
+		if err != nil {
+			return echo.NewHTTPError(http.StatusInternalServerError, "failed to read placeholder image")
+		}
+		return c.Blob(http.StatusOK, "image/jpg", placeholderData)
 	}
 
 	return c.Blob(http.StatusOK, "image/jpeg", data)
