@@ -152,6 +152,7 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: left;
+  margin-bottom: 50px;
 }
 
 .ItemDetail .ItemDetailWrapper {
@@ -366,4 +367,13 @@ body {
   border-color: #3e4144;
   margin-top: 30px;
   padding-top: 30px;
+}
+
+.ItemDetailComment {
+  margin-top: 20px;
+}
+
+.ItemDetailDeets {
+  margin-top: 10px;
+  margin-bottom: 10px;
 }

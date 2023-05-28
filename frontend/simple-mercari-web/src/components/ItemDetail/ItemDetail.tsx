@@ -188,8 +188,10 @@ export const ItemDetail = ({ onUpdateItem }: UpdateItemProps) => {
               <h1 className="display-2">{item.name}</h1>
               <h4 className="ItemCategory">{item.category_name}</h4>
               <h3>¥ {item.price}</h3>
-              <h4>Description:</h4>
-              <p>{item.description}</p>
+              <div className="ItemDetailDeets">
+                <h4>Description:</h4>
+                <p>{item.description}</p>
+              </div>
               {buttonType === "sold" && (
                 <button
                   disabled={true}
@@ -209,7 +211,12 @@ export const ItemDetail = ({ onUpdateItem }: UpdateItemProps) => {
                   Purchase
                 </button>
               )}
-              <CommentBoard onComment={handleNewComment} comments={comments} />
+              <div className="ItemDetailComment">
+                <CommentBoard
+                  onComment={handleNewComment}
+                  comments={comments}
+                />
+              </div>
             </div>
           </div>
         )}
