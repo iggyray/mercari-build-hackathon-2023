@@ -4,7 +4,11 @@ import { useCookies } from "react-cookie"
 import { MerComponent } from "../MerComponent"
 import { toast } from "react-toastify"
 import { fetcher, fetcherBlob } from "../../helper"
-import { CommentBoard, CommentType } from "../CommentBoard/CommentBoard"
+import {
+  CommentBoard,
+  CommentType,
+  NewCommentValues,
+} from "../CommentBoard/CommentBoard"
 
 const ItemStatus = {
   ItemStatusInitial: 1,
@@ -36,9 +40,10 @@ export const ItemDetail = ({ onUpdateItem }: UpdateItemProps) => {
   const params = useParams()
   const [item, setItem] = useState<Item>()
   const [itemImage, setItemImage] = useState<Blob>()
+  const [comments, setComments] = useState<CommentType[]>([])
   const [cookies] = useCookies(["token", "userID"])
 
-  const handleNewComment = (comment: string) => {
+  const handleNewComment = (newComment: NewCommentValues) => {
     fetcher<{ comment: CommentType }>(`/items/${params.id}/comments`, {
       method: "POST",
       headers: {
@@ -47,14 +52,14 @@ export const ItemDetail = ({ onUpdateItem }: UpdateItemProps) => {
         Authorization: `Bearer ${cookies.token}`,
       },
       body: JSON.stringify({
-        content: comment,
+        parent_comment_id: newComment.parentCommentId,
+        content: newComment.content,
       }),
     }).catch(async (err) => {
       const { message } = await err.json()
       toast.error(message)
     })
   }
-  const [comments, setComments] = useState<CommentType[]>([])
 
   const fetchItem = () => {
     fetcher<Item>(`/items/${params.id}`, {
