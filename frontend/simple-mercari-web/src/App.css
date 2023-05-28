@@ -377,3 +377,18 @@ body {
   margin-top: 10px;
   margin-bottom: 10px;
 }
+
+.ItemTitle {
+  display: flex;
+  align-items: center;
+}
+
+.ItemTitle p {
+  margin-top: 5px;
+  margin-left: 5px;
+}
+
+#SoldOut {
+  padding: 0px 3px;
+  pointer-events: none;
+}
