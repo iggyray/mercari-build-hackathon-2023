@@ -105,25 +105,28 @@ type loginResponse struct {
 }
 
 type getCommentResponse struct {
-	CommentId	int64	`json:"comment_id"`
-	UserId		int64	`json:"user_id"`
-	UserName	string	`json:"user_name"`
-	ItemId		int32	`json:"item_id"`
-	Content		string	`json:"content"`
-	CreatedAt	string	`json:"created_at"`
+	CommentId		int64	`json:"comment_id"`
+	ParentCommentId	*int64 `json:"parent_comment_id"`
+	UserId			int64	`json:"user_id"`
+	UserName		string	`json:"user_name"`
+	ItemId			int32	`json:"item_id"`
+	Content			string	`json:"content"`
+	CreatedAt		string	`json:"created_at"`
 }
 
 type addCommentRequest struct {
-	Content string `json:"content"`
+	ParentCommentId	*int64 `json:"parent_comment_id"`
+	Content			string	`json:"content"`
 }
 
 type addCommentResponse struct {
-	CommentId	int64	`json:"comment_id"`
-	UserId		int64	`json:"user_id"`
-	UserName	string	`json:"user_name"`
-	ItemId		int32	`json:"item_id"`
-	Content		string	`json:"content"`
-	CreatedAt	string	`json:"created_at"`
+	CommentId		int64	`json:"comment_id"`
+	ParentCommentId	*int64 `json:"parent_comment_id"`
+	UserId			int64	`json:"user_id"`
+	UserName		string	`json:"user_name"`
+	ItemId			int32	`json:"item_id"`
+	Content			string	`json:"content"`
+	CreatedAt		string	`json:"created_at"`
 }
 
 type Handler struct {
@@ -716,22 +719,30 @@ func (h *Handler) GetCommentsByItemId(c echo.Context) error {
 
 	itemID, err := strconv.Atoi(c.Param("itemID"))
 	if err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, err)
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
 	comments, err := h.CommentRepo.GetCommentsByItemId(ctx, int32(itemID))
 	// TODO: not found handling
 	// http.StatusNotFound(404)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusNotFound, err)
+		return echo.NewHTTPError(http.StatusNotFound, err.Error())
 	}
 
 	var res []getCommentResponse
 	for _, comment := range comments {
 		if err != nil {
-			return c.JSON(http.StatusInternalServerError, err)
+			return c.JSON(http.StatusInternalServerError, err.Error())
 		}
-		res = append(res, getCommentResponse{CommentId: comment.CommentID, UserId: comment.UserID, UserName: comment.UserName, ItemId: comment.ItemID, Content: comment.Content, CreatedAt: comment.CreatedAt})
+		res = append(res, getCommentResponse{
+			CommentId: comment.CommentID, 
+			ParentCommentId: comment.ParentCommentID, 
+			UserId: comment.UserID, 
+			UserName: comment.UserName, 
+			ItemId: comment.ItemID, 
+			Content: comment.Content, 
+			CreatedAt: comment.CreatedAt,
+		})
 	}
 
 	return c.JSON(http.StatusOK, res)
@@ -744,28 +755,29 @@ func (h *Handler) AddComment(c echo.Context) error {
 
 	req := new(addCommentRequest)
 	if err := c.Bind(req); err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, err)
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
 	userID, err := getUserID(c)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusUnauthorized, err)
+		return echo.NewHTTPError(http.StatusUnauthorized, err.Error())
 	}
 
 	user, err := h.UserRepo.GetUser(ctx, userID)
 	
 	itemID, err := strconv.Atoi(c.Param("itemID"))
 	if err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, err)
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
 
-	comment, err := h.CommentRepo.AddComment(ctx, domain.Comment{UserID: user.ID, UserName: user.Name, ItemID: int32(itemID), Content: req.Content})
+	comment, err := h.CommentRepo.AddComment(ctx, domain.Comment{ParentCommentID: req.ParentCommentId, UserID: user.ID, UserName: user.Name, ItemID: int32(itemID), Content: req.Content})
 	if err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, err)
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
 
 	return c.JSON(http.StatusOK, addCommentResponse{
 		CommentId: comment.CommentID,
+		ParentCommentId: comment.ParentCommentID,
 		UserId: comment.UserID,
 		UserName: comment.UserName,
 		ItemId: comment.ItemID,
