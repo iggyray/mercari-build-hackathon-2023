@@ -224,7 +224,8 @@ func NewCommentRepository(db *sql.DB) CommentRepository {
 }
 
 func (r *CommentDBRepository) AddComment(ctx context.Context, comment domain.Comment) (domain.Comment, error) {
-	if _, err := r.ExecContext(ctx, "INSERT INTO comments (user_id, user_name, item_id, content) VALUES (?, ?, ?, ?)", 
+	if _, err := r.ExecContext(ctx, "INSERT INTO comments (parent_comment_id, user_id, user_name, item_id, content) VALUES (?, ?, ?, ?)", 
+		comment.ParentCommentID,
 		comment.UserID, 
 		comment.UserName, 
 		comment.ItemID, 
@@ -236,7 +237,7 @@ func (r *CommentDBRepository) AddComment(ctx context.Context, comment domain.Com
 	row := r.QueryRowContext(ctx, "SELECT * FROM comments WHERE rowid = LAST_INSERT_ROWID()")
 
 	var res domain.Comment
-	return res, row.Scan(&res.CommentID, &res.UserID, &res.UserName, &res.ItemID, &res.Content, &res.CreatedAt)
+	return res, row.Scan(&res.CommentID, &res.ParentCommentID, &res.UserID, &res.UserName, &res.ItemID, &res.Content, &res.CreatedAt)
 }
 
 func (r *CommentDBRepository) GetCommentsByItemId(ctx context.Context, itemId int32) ([]domain.Comment, error) {
@@ -249,7 +250,7 @@ func (r *CommentDBRepository) GetCommentsByItemId(ctx context.Context, itemId in
 	var comments []domain.Comment
 	for rows.Next() {
 		var comment domain.Comment
-		if err := rows.Scan(&comment.CommentID, &comment.UserID, &comment.UserName, &comment.ItemID, &comment.Content, &comment.CreatedAt); err != nil {
+		if err := rows.Scan(&comment.CommentID, &comment.ParentCommentID, &comment.UserID, &comment.UserName, &comment.ItemID, &comment.Content, &comment.CreatedAt); err != nil {
 			return nil, err
 		}
 		comments = append(comments, comment)
