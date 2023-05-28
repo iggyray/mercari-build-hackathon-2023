@@ -373,6 +373,10 @@ func (h *Handler) UpdateItem(c echo.Context) error {
 	blob := bytes.NewBuffer(dest)
 	// TODO: pass very big file
 	// http.StatusBadRequest(400)
+	const MaxImageSize = 1 << 20 // 1 MB
+	if file.Size > MaxImageSize {
+		return echo.NewHTTPError(http.StatusBadRequest, "Please upload image less than 1MB")
+	}
 	if _, err := io.Copy(blob, src); err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err)
 	}
