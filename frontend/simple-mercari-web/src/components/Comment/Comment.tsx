@@ -1,39 +1,33 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { CommentType, NewCommentValues } from "../CommentBoard"
 import { CommentReply } from "../CommentReply"
 
 interface CommentProps {
   comment: CommentType
+  onCommentReply: (commentReply: NewCommentValues) => void
 }
 
-export const Comment = ({ comment }: CommentProps) => {
-  const defaultNewCommentReplyState: NewCommentValues = {
-    parentCommentId: undefined,
-    content: "",
-  }
+export const Comment = ({ comment, onCommentReply }: CommentProps) => {
   const [showReplyInput, setShowReplyInput] = useState<boolean>(false)
-  const [newCommentReply, setNewCommentReply] = useState<NewCommentValues>(
-    defaultNewCommentReplyState
-  )
+  const [newCommentReply, setNewCommentReply] = useState<string>("")
 
   const toggleShowReplyInput = () => {
     setShowReplyInput(!showReplyInput)
   }
 
   const onNewCommentReply = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setNewCommentReply({
-      ...newCommentReply,
-      content: event.target.value,
-    })
+    setNewCommentReply(event.target.value)
   }
 
   const onSubmitReply = (event: React.FormEvent<HTMLFormElement>) => {
-    setNewCommentReply({
-      ...newCommentReply,
+    const commentReply: NewCommentValues = {
       parentCommentId: comment.comment_id,
-    })
-    // onComment(newCommentValue)
+      content: newCommentReply,
+    }
+    onCommentReply(commentReply)
   }
+
+  useEffect(() => {}, [comment])
 
   return (
     <div className="CommentWrapper">

@@ -22,27 +22,18 @@ interface CommentBoardProps {
 }
 
 export const CommentBoard = ({ onComment, comments }: CommentBoardProps) => {
-  const defaultNewCommentState: NewCommentValues = {
-    parentCommentId: undefined,
-    content: "",
-  }
-  const [newCommentValue, setNewCommentValue] = useState<NewCommentValues>(
-    defaultNewCommentState
-  )
+  const [newCommentValue, setNewCommentValue] = useState<string>("")
 
   const onNewComment = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setNewCommentValue({
-      ...newCommentValue,
-      content: event.target.value,
-    })
+    setNewCommentValue(event.target.value)
   }
 
   const onSubmitComment = (event: React.FormEvent<HTMLFormElement>) => {
-    setNewCommentValue({
-      ...newCommentValue,
+    const newComment: NewCommentValues = {
       parentCommentId: undefined,
-    })
-    onComment(newCommentValue)
+      content: newCommentValue,
+    }
+    onComment(newComment)
   }
 
   return (
@@ -52,7 +43,13 @@ export const CommentBoard = ({ onComment, comments }: CommentBoardProps) => {
         {comments && (
           <div className="CommentBoard flex-column">
             {comments.map((comment) => {
-              return <Comment key={comment.comment_id} comment={comment} />
+              return (
+                <Comment
+                  key={comment.comment_id}
+                  comment={comment}
+                  onCommentReply={onComment}
+                />
+              )
             })}
           </div>
         )}
