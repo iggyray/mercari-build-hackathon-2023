@@ -393,13 +393,13 @@ func (h *Handler) Sell(c echo.Context) error {
 
 	// http.StatusPreconditionFailed(412)
 	// TODO: only update when status is initial
-	if item.Status != domain.ItemStatusInitial {
-		return echo.NewHTTPError(http.StatusBadRequest, "Item is already on sale")
-	}
-	// http.StatusPreconditionFailed(412)
-	if err := h.ItemRepo.UpdateItemStatus(ctx, item.ID, domain.ItemStatusOnSale); err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
-	}
+	// if item.Status != domain.ItemStatusInitial {
+	// 	return echo.NewHTTPError(http.StatusBadRequest, "Item is already on sale")
+	// }
+	// // http.StatusPreconditionFailed(412)
+	// if err := h.ItemRepo.UpdateItemStatus(ctx, item.ID, domain.ItemStatusOnSale); err != nil {
+	// 	return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+	// }
 
 	return c.JSON(http.StatusOK, "successful")
 }
