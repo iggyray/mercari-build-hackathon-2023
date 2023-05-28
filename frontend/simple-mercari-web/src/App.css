@@ -175,6 +175,10 @@ body {
   font-style: italic;
 }
 
+.ItemDetailDesc p {
+  overflow-wrap: break-word;
+}
+
 .ItemListPage {
   width: 90%;
 }
