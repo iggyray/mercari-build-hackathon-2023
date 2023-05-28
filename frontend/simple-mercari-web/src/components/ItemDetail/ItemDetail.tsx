@@ -8,6 +8,7 @@ import {
   CommentBoard,
   CommentType,
   NewCommentValues,
+  NestedCommentType,
 } from "../CommentBoard/CommentBoard"
 
 const ItemStatus = {
@@ -40,7 +41,7 @@ export const ItemDetail = ({ onUpdateItem }: UpdateItemProps) => {
   const params = useParams()
   const [item, setItem] = useState<Item>()
   const [itemImage, setItemImage] = useState<Blob>()
-  const [comments, setComments] = useState<CommentType[]>([])
+  const [comments, setComments] = useState<NestedCommentType[]>([])
   const [cookies] = useCookies(["token", "userID"])
 
   const handleNewComment = (newComment: NewCommentValues) => {
@@ -91,6 +92,22 @@ export const ItemDetail = ({ onUpdateItem }: UpdateItemProps) => {
       })
   }
 
+  const nestComments = (comments: CommentType[]) => {
+    const nestedComments: NestedCommentType[] = comments
+      .filter((comment) => !comment.parent_comment_id)
+      .map((parent) => {
+        const replies = comments.filter(
+          (r) => r.parent_comment_id === parent.comment_id
+        )
+        return {
+          commentParent: parent,
+          commentReplies: replies,
+        }
+      })
+
+    setComments(nestedComments)
+  }
+
   const fetchComments = () => {
     fetcher<CommentType[]>(`/items/${params.id}/comments`, {
       method: "GET",
@@ -100,7 +117,7 @@ export const ItemDetail = ({ onUpdateItem }: UpdateItemProps) => {
       },
     })
       .then((res) => {
-        setComments(res)
+        nestComments(res)
       })
       .catch(async (err) => {
         const { message } = await err.json()

@@ -11,6 +11,11 @@ export interface CommentType {
   created_at: string
 }
 
+export interface NestedCommentType {
+  commentParent: CommentType
+  commentReplies: CommentType[]
+}
+
 export type NewCommentValues = {
   parentCommentId: number | undefined
   content: string
@@ -18,27 +23,22 @@ export type NewCommentValues = {
 
 interface CommentBoardProps {
   onComment: (comment: NewCommentValues) => void
-  comments: CommentType[]
+  comments: NestedCommentType[]
 }
 
 export const CommentBoard = ({ onComment, comments }: CommentBoardProps) => {
-  const defaultNewCommentState: NewCommentValues = {
-    parentCommentId: undefined,
-    content: "",
-  }
-  const [newCommentValue, setNewCommentValue] = useState<NewCommentValues>(
-    defaultNewCommentState
-  )
+  const [newCommentValue, setNewCommentValue] = useState<string>("")
 
   const onNewComment = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setNewCommentValue({
-      parentCommentId: undefined,
-      content: event.target.value,
-    })
+    setNewCommentValue(event.target.value)
   }
 
   const onSubmitComment = (event: React.FormEvent<HTMLFormElement>) => {
-    onComment(newCommentValue)
+    const newComment: NewCommentValues = {
+      parentCommentId: undefined,
+      content: newCommentValue,
+    }
+    onComment(newComment)
   }
 
   return (
@@ -48,7 +48,13 @@ export const CommentBoard = ({ onComment, comments }: CommentBoardProps) => {
         {comments && (
           <div className="CommentBoard flex-column">
             {comments.map((comment) => {
-              return <Comment key={comment.comment_id} comment={comment} />
+              return (
+                <Comment
+                  key={comment.commentParent.comment_id}
+                  comment={comment}
+                  onCommentReply={onComment}
+                />
+              )
             })}
           </div>
         )}
