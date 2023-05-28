@@ -35,15 +35,33 @@ func (r *UserDBRepository) AddUser(ctx context.Context, user domain.User) (int64
 		return 0, fmt.Errorf("User with the name %s already exists", user.Name)
 	}
 
-	if _, err := r.ExecContext(ctx, "INSERT INTO users (name, password) VALUES (?, ?)", user.Name, user.Password); err != nil {
+	// Start a transaction
+	tx, err := r.BeginTx(ctx, nil)
+	if err != nil {
+		return 0, err
+	}
+
+	if _, err := tx.ExecContext(ctx, "INSERT INTO users (name, password) VALUES (?, ?)", user.Name, user.Password); err != nil {
+		tx.Rollback()
 		return 0, err
 	}
 	// TODO: if other insert query is executed at the same time, it might return wrong id
 	// http.StatusConflict(409) 既に同じIDがあった場合
-	row := r.QueryRowContext(ctx, "SELECT id FROM users WHERE rowid = LAST_INSERT_ROWID()")
+	row := tx.QueryRowContext(ctx, "SELECT id FROM users WHERE rowid = LAST_INSERT_ROWID()")
 
 	var id int64
-	return id, row.Scan(&id)
+	err = row.Scan(&id)
+	if err != nil {
+		tx.Rollback()
+		return 0, err
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		return 0, err
+	}
+
+	return id, nil
 }
 
 func (r *UserDBRepository) GetUser(ctx context.Context, id int64) (domain.User, error) {
