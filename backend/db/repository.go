@@ -23,6 +23,7 @@ func NewUserRepository(db *sql.DB) UserRepository {
 }
 
 func (r *UserDBRepository) AddUser(ctx context.Context, user domain.User) (int64, error) {
+
 	if _, err := r.ExecContext(ctx, "INSERT INTO users (name, password) VALUES (?, ?)", user.Name, user.Password); err != nil {
 		return 0, err
 	}
@@ -224,10 +225,10 @@ func NewCommentRepository(db *sql.DB) CommentRepository {
 }
 
 func (r *CommentDBRepository) AddComment(ctx context.Context, comment domain.Comment) (domain.Comment, error) {
-	if _, err := r.ExecContext(ctx, "INSERT INTO comments (user_id, user_name, item_id, content) VALUES (?, ?, ?, ?)", 
-		comment.UserID, 
-		comment.UserName, 
-		comment.ItemID, 
+	if _, err := r.ExecContext(ctx, "INSERT INTO comments (user_id, user_name, item_id, content) VALUES (?, ?, ?, ?)",
+		comment.UserID,
+		comment.UserName,
+		comment.ItemID,
 		comment.Content); err != nil {
 		return domain.Comment{}, err
 	}
