@@ -13,9 +13,7 @@ const ItemStatus = {
 
 type ItemStatusType = (typeof ItemStatus)[keyof typeof ItemStatus]
 
-type ButtonType = "purchase" | "sold" | "edit"
-
-interface Item {
+export interface Item {
   id: number
   name: string
   category_id: number
@@ -26,7 +24,13 @@ interface Item {
   description: string
 }
 
-export const ItemDetail = () => {
+type ButtonType = "purchase" | "sold" | "edit"
+
+interface UpdateItemProps {
+  onUpdateItem: (item: Item | undefined) => void
+}
+
+export const ItemDetail = ({ onUpdateItem }: UpdateItemProps) => {
   const navigate = useNavigate()
   const params = useParams()
   const [item, setItem] = useState<Item>()
@@ -104,6 +108,11 @@ export const ItemDetail = () => {
     }
   }
 
+  const onEdit = () => {
+    onUpdateItem(item)
+    navigate("/sell")
+  }
+
   useEffect(() => {
     fetchItem()
   }, [])
@@ -138,7 +147,9 @@ export const ItemDetail = () => {
                 </button>
               )}
               {buttonType === "edit" && (
-                <button id="MerButton">Edit Listing</button>
+                <button id="MerButton" onClick={onEdit}>
+                  Edit Listing
+                </button>
               )}
               {buttonType === "purchase" && (
                 <button onClick={onSubmit} id="MerButton">

@@ -11,9 +11,10 @@ import Dropdown from "react-bootstrap/Dropdown"
 
 interface SearchBarProps {
   onSearch: (keyword: string) => void
+  onResetItemState: () => void
 }
 
-export const Header = ({ onSearch }: SearchBarProps) => {
+export const Header = ({ onSearch, onResetItemState }: SearchBarProps) => {
   const [cookies, _, removeCookie] = useCookies(["userID", "userName", "token"])
   const [showNavbar, setShowNavbar] = useState(false)
   const navigate = useNavigate()
@@ -32,10 +33,20 @@ export const Header = ({ onSearch }: SearchBarProps) => {
 
   const onHome = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     navigate("/")
+    onResetItemState()
     if (location.pathname === "/") {
       window.location.reload()
     }
-    console.log("hello")
+  }
+
+  const onLoggedInSell = (
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
+    onResetItemState()
+    navigate("/sell")
+    if (location.pathname === "/sell") {
+      window.location.reload()
+    }
   }
 
   return (
@@ -97,7 +108,7 @@ export const Header = ({ onSearch }: SearchBarProps) => {
                       </Dropdown.Item>
                     </Dropdown.Menu>
                   </Dropdown>
-                  <button id="MerButton" onClick={() => navigate("/sell")}>
+                  <button id="MerButton" onClick={onLoggedInSell}>
                     Sell
                   </button>
                 </Nav>

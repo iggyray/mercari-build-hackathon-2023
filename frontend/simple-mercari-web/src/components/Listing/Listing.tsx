@@ -3,7 +3,8 @@ import { useCookies } from "react-cookie"
 import { MerComponent } from "../MerComponent"
 import { toast } from "react-toastify"
 import { fetcher } from "../../helper"
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom"
+import { Item } from "../ItemDetail"
 
 interface Category {
   id: number
@@ -18,8 +19,12 @@ type formDataType = {
   image: string | File
 }
 
-export const Listing: React.FC = () => {
+interface ListingProps {
+  itemValue: Item | undefined
+  onResetItemState: () => void
+}
 
+export const Listing = (props: ListingProps) => {
   const initialState = {
     name: "",
     category_id: 1,
@@ -36,6 +41,17 @@ export const Listing: React.FC = () => {
     navigate("/login")
   }
 
+  const onUpdateItem = () => {
+    if (!!props.itemValue) {
+      setValues({
+        ...values,
+        name: props.itemValue.name,
+        category_id: props.itemValue.category_id,
+        price: props.itemValue.price,
+        description: props.itemValue.description,
+      })
+    }
+  }
 
   const onValueChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setValues({
@@ -67,20 +83,38 @@ export const Listing: React.FC = () => {
     data.append("description", values.description)
     data.append("image", values.image)
 
-    fetcher<{ id: number }>(`/items`, {
-      method: "POST",
-      body: data,
-      headers: {
-        Authorization: `Bearer ${cookies.token}`,
-      },
-    })
-      .then((res) => {
-        sell(res.id)
+    if (!props.itemValue) {
+      fetcher<{ id: number }>(`/items`, {
+        method: "POST",
+        body: data,
+        headers: {
+          Authorization: `Bearer ${cookies.token}`,
+        },
       })
-      .catch((error: Error) => {
-        toast.error(error.message)
-        console.error("POST error:", error)
+        .then((res) => {
+          sell(res.id)
+        })
+        .catch((error: Error) => {
+          toast.error(error.message)
+          console.error("POST error:", error)
+        })
+    } else {
+      console.log("updating item from listing")
+      fetcher<{ id: number }>(`/items/${props.itemValue.id}`, {
+        method: "PUT",
+        body: data,
+        headers: {
+          Authorization: `Bearer ${cookies.token}`,
+        },
       })
+        .then((res) => {
+          sell(res.id)
+        })
+        .catch((error: Error) => {
+          toast.error(error.message)
+          console.error("POST error:", error)
+        })
+    }
   }
 
   const sell = (itemID: number) =>
@@ -118,14 +152,24 @@ export const Listing: React.FC = () => {
       })
   }
 
+  const onCancelEdit = () => {
+    props.onResetItemState()
+    navigate(`/item/${props.itemValue?.id}`)
+  }
+
   useEffect(() => {
     fetchCategories()
   }, [])
+
+  useEffect(() => {
+    onUpdateItem()
+  }, [props.itemValue])
 
   return (
     <MerComponent>
       <div className="Listing">
         <form onSubmit={onSubmit} className="ListingForm">
+          {!!props.itemValue ? <h1>Edit Listing</h1> : <h1>List New Item</h1>}
           <div>
             <div className="mb-3">
               <input
@@ -134,6 +178,7 @@ export const Listing: React.FC = () => {
                 id="MerTextInput"
                 className="form-control"
                 placeholder="name"
+                value={values.name}
                 onChange={onValueChange}
                 required
               />
@@ -159,6 +204,7 @@ export const Listing: React.FC = () => {
                 id="MerTextInput"
                 className="form-control"
                 placeholder="price"
+                value={values.price}
                 onChange={onValueChange}
                 required
               />
@@ -170,6 +216,7 @@ export const Listing: React.FC = () => {
                 id="MerTextInput"
                 className="form-control"
                 placeholder="description"
+                value={values.description}
                 onChange={onValueChange}
                 required
               />
@@ -184,9 +231,25 @@ export const Listing: React.FC = () => {
                 required
               />
             </div>
-            <button type="submit" id="MerButton" className="btn btn-danger">
-              List this item
-            </button>
+            {!props.itemValue && (
+              <button type="submit" id="MerButton" className="btn btn-danger">
+                List this item
+              </button>
+            )}
+            {!!props.itemValue && (
+              <div>
+                <button type="submit" id="MerButton" className="btn btn-danger">
+                  Edit Listing
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-outline-danger button"
+                  onClick={onCancelEdit}
+                >
+                  Cancel
+                </button>
+              </div>
+            )}
           </div>
         </form>
       </div>
