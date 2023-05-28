@@ -224,7 +224,7 @@ func NewCommentRepository(db *sql.DB) CommentRepository {
 }
 
 func (r *CommentDBRepository) AddComment(ctx context.Context, comment domain.Comment) (domain.Comment, error) {
-	if _, err := r.ExecContext(ctx, "INSERT INTO comments (parent_comment_id, user_id, user_name, item_id, content) VALUES (?, ?, ?, ?)", 
+	if _, err := r.ExecContext(ctx, "INSERT INTO comments (parent_comment_id, user_id, user_name, item_id, content) VALUES (?, ?, ?, ?, ?)", 
 		comment.ParentCommentID,
 		comment.UserID, 
 		comment.UserName, 
