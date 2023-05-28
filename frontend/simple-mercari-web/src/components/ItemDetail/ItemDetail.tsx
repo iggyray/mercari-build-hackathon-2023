@@ -45,21 +45,25 @@ export const ItemDetail = ({ onUpdateItem }: UpdateItemProps) => {
   const [cookies] = useCookies(["token", "userID"])
 
   const handleNewComment = (newComment: NewCommentValues) => {
-    fetcher<{ comment: CommentType }>(`/items/${params.id}/comments`, {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${cookies.token}`,
-      },
-      body: JSON.stringify({
-        parent_comment_id: newComment.parentCommentId,
-        content: newComment.content,
-      }),
-    }).catch(async (err) => {
-      const { message } = await err.json()
-      toast.error(message)
-    })
+    if (cookies.token && cookies.userID) {
+      fetcher<{ comment: CommentType }>(`/items/${params.id}/comments`, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${cookies.token}`,
+        },
+        body: JSON.stringify({
+          parent_comment_id: newComment.parentCommentId,
+          content: newComment.content,
+        }),
+      }).catch(async (err) => {
+        const { message } = await err.json()
+        toast.error(message)
+      })
+    } else {
+      navigate("/login")
+    }
   }
 
   const fetchItem = () => {
