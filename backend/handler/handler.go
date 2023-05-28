@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -169,8 +170,16 @@ func (h *Handler) Register(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, err)
 	}
 
+	// Check if name is not blank
+	if req.Name == "" {
+		return echo.NewHTTPError(http.StatusBadRequest, "Name cannot not be blank")
+	}
+
 	hash, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
-	if err != nil {
+	if err != nil { // Check for user already exists error
+		if strings.Contains(err.Error(), "already exists") {
+			return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+		}
 		return echo.NewHTTPError(http.StatusInternalServerError, err)
 	}
 
@@ -552,7 +561,7 @@ func (h *Handler) GetImage(c echo.Context) error {
 	ctx := c.Request().Context()
 
 	// TODO: overflow
-	itemID, err := strconv.Atoi(c.Param("itemID"))
+	itemID, err := strconv.ParseInt(c.Param("itemID"), 10, 32)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, "invalid itemID type")
 	}
@@ -630,7 +639,6 @@ func (h *Handler) Purchase(c echo.Context) error {
 	}
 
 	// TODO: update only when item status is on sale
-	// Check if item is onsale
 
 	// http.StatusPreconditionFailed(412)
 
@@ -764,7 +772,7 @@ func (h *Handler) AddComment(c echo.Context) error {
 	}
 
 	user, err := h.UserRepo.GetUser(ctx, userID)
-	
+
 	itemID, err := strconv.Atoi(c.Param("itemID"))
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())

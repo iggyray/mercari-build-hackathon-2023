@@ -29,9 +29,10 @@ export const Signup: React.FC<Props> = ({ toggleLogIn }) => {
         console.log("POST success:", user.name)
         toggleLogIn()
       })
-      .catch((err) => {
-        console.log(`POST error:`, err)
-        toast.error("Sign Up Failed")
+      .catch(async (err) => {
+        const { message } = await err.json()
+        console.log(`POST error:`, message)
+        toast.error(message || "An error occurred")
       })
   }
 
