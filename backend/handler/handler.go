@@ -558,7 +558,7 @@ func (h *Handler) GetImage(c echo.Context) error {
 	ctx := c.Request().Context()
 
 	// TODO: overflow
-	itemID, err := strconv.Atoi(c.Param("itemID"))
+	itemID, err := strconv.ParseInt(c.Param("itemID"), 10, 32)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, "invalid itemID type")
 	}
