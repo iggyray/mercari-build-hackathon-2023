@@ -581,7 +581,7 @@ func (h *Handler) GetImage(c echo.Context) error {
 		if err != nil {
 			return echo.NewHTTPError(http.StatusInternalServerError, "failed to read placeholder image")
 		}
-		return c.Blob(http.StatusOK, "image/png", placeholderData)
+		return c.Blob(http.StatusOK, "image/jpg", placeholderData)
 	}
 
 	return c.Blob(http.StatusOK, "image/jpeg", data)
