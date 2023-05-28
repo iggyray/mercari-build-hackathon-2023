@@ -181,6 +181,7 @@ body {
 
 .ItemListPage {
   width: 90%;
+  margin-bottom: 200px;
 }
 
 .ItemContainer {
@@ -260,6 +261,7 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: left;
+  margin-bottom: 50px;
 }
 
 .CommentBoardWrapper {
@@ -333,4 +335,35 @@ body {
 
 .CommentReplyInput {
   margin-top: 10px;
+}
+
+.ProfileBanner {
+  width: 60%;
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+}
+
+.ProfileBanner input {
+  background-color: #222427;
+  color: white;
+  border-color: #6d757d;
+  display: block;
+  flex: 1 1 0%;
+  padding: 16px;
+  width: 300px;
+}
+
+.ProfileBanner input:focus {
+  background-color: #222427;
+  color: white;
+  border-color: #6d757d;
+}
+
+.ProfilePageItems {
+  border-top: solid;
+  border-width: 1px;
+  border-color: #3e4144;
+  margin-top: 30px;
+  padding-top: 30px;
 }

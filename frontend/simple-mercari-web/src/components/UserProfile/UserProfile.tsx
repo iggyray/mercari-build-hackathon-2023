@@ -18,7 +18,7 @@ export const UserProfile: React.FC = () => {
   const [items, setItems] = useState<Item[]>([])
   const [balance, setBalance] = useState<number>()
   const [addedbalance, setAddedBalance] = useState<number>()
-  const [cookies] = useCookies(["token"])
+  const [cookies] = useCookies(["token", "userName"])
   const params = useParams()
 
   const fetchItems = () => {
@@ -87,26 +87,30 @@ export const UserProfile: React.FC = () => {
   return (
     <MerComponent>
       <div className="UserProfile">
-        <div>
-          <h2>
-            <span>Balance: {balance}</span>
-          </h2>
-          <input
-            type="number"
-            name="balance"
-            id="MerTextInput"
-            placeholder="0"
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              setAddedBalance(Number(e.target.value))
-            }}
-            required
-          />
-          <button onClick={onBalanceSubmit} id="MerButton">
-            Add balance
-          </button>
+        <div className="ProfileBanner">
+          <div>
+            <h1 className="display-3">{cookies.userName}</h1>
+            <h5>Balance: {balance}</h5>
+          </div>
+          <div>
+            <input
+              type="number"
+              min={0}
+              name="balance"
+              placeholder="0"
+              className="form-control"
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                setAddedBalance(Number(e.target.value))
+              }}
+              required
+            />
+            <button onClick={onBalanceSubmit} id="MerButton">
+              Add balance
+            </button>
+          </div>
         </div>
 
-        <div>
+        <div className="ProfilePageItems">
           <h2>Item List</h2>
           {<ItemList items={items} />}
         </div>
