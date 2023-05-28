@@ -4,6 +4,7 @@ import { Comment } from "../Comment/Comment"
 export interface CommentType {
   comment_id: number
   user_id: number
+  user_name: string
   item_id: number
   content: string
   created_at: string
