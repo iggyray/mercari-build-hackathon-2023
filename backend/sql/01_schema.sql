@@ -36,6 +36,7 @@ CREATE TABLE IF NOT EXISTS comments
 (
     comment_id integer primary key autoincrement,
     user_id integer NOT NULL,
+    user_name varchar(50) NOT NULL,
     item_id integer NOT NULL,
     content text NOT NULL,
     created_at text NOT NULL DEFAULT (DATETIME('now', 'localtime')),
