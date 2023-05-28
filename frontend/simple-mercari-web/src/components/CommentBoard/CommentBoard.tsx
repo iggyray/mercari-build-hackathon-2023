@@ -11,6 +11,11 @@ export interface CommentType {
   created_at: string
 }
 
+export interface NestedCommentType {
+  commentParent: CommentType
+  commentReplies: CommentType[]
+}
+
 export type NewCommentValues = {
   parentCommentId: number | undefined
   content: string
@@ -18,7 +23,7 @@ export type NewCommentValues = {
 
 interface CommentBoardProps {
   onComment: (comment: NewCommentValues) => void
-  comments: CommentType[]
+  comments: NestedCommentType[]
 }
 
 export const CommentBoard = ({ onComment, comments }: CommentBoardProps) => {
@@ -45,7 +50,7 @@ export const CommentBoard = ({ onComment, comments }: CommentBoardProps) => {
             {comments.map((comment) => {
               return (
                 <Comment
-                  key={comment.comment_id}
+                  key={comment.commentParent.comment_id}
                   comment={comment}
                   onCommentReply={onComment}
                 />

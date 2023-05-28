@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react"
-import { CommentType, NewCommentValues } from "../CommentBoard"
+import { NewCommentValues, NestedCommentType } from "../CommentBoard"
 import { CommentReply } from "../CommentReply"
 
 interface CommentProps {
-  comment: CommentType
+  comment: NestedCommentType
   onCommentReply: (commentReply: NewCommentValues) => void
 }
 
@@ -21,7 +21,7 @@ export const Comment = ({ comment, onCommentReply }: CommentProps) => {
 
   const onSubmitReply = (event: React.FormEvent<HTMLFormElement>) => {
     const commentReply: NewCommentValues = {
-      parentCommentId: comment.comment_id,
+      parentCommentId: comment.commentParent.comment_id,
       content: newCommentReply,
     }
     onCommentReply(commentReply)
@@ -32,15 +32,15 @@ export const Comment = ({ comment, onCommentReply }: CommentProps) => {
   return (
     <div className="CommentWrapper">
       <h6>
-        <b>{comment.user_name}</b>
+        <b>{comment.commentParent.user_name}</b>
       </h6>
       <div className="CommentBubble">
-        <p>{comment.content}</p>
+        <p>{comment.commentParent.content}</p>
         <div className="CommentFooter">
           <span className="ReplyButton" onClick={toggleShowReplyInput}>
             reply
           </span>
-          <span>{comment.created_at}</span>
+          <span>{comment.commentParent.created_at}</span>
         </div>
         {showReplyInput && (
           <div className="CommentInput CommentReplyInput">
@@ -59,7 +59,13 @@ export const Comment = ({ comment, onCommentReply }: CommentProps) => {
           </div>
         )}
       </div>
-      <CommentReply reply={comment} />
+      {comment.commentReplies.length > 0 && (
+        <div>
+          {comment.commentReplies.map((reply) => {
+            return <CommentReply key={reply.comment_id} reply={reply} />
+          })}
+        </div>
+      )}
     </div>
   )
 }
