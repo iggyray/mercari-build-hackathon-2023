@@ -32,12 +32,16 @@ export const CommentBoard = ({ onComment, comments }: CommentBoardProps) => {
 
   const onNewComment = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setNewCommentValue({
-      parentCommentId: undefined,
+      ...newCommentValue,
       content: event.target.value,
     })
   }
 
   const onSubmitComment = (event: React.FormEvent<HTMLFormElement>) => {
+    setNewCommentValue({
+      ...newCommentValue,
+      parentCommentId: undefined,
+    })
     onComment(newCommentValue)
   }
 
