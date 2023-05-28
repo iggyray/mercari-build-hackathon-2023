@@ -98,9 +98,9 @@ export const Listing = (props: ListingProps) => {
         .then((res) => {
           sell(parseInt(cookies.userID), res.id)
         })
-        .catch((error: Error) => {
-          toast.error(error.message)
-          console.error("POST error:", error)
+        .catch(async (err) => {
+          const { message } = await err.json()
+          toast.error(message || "Comments could not be fetched")
         })
     } else {
       console.log("updating item from listing")
@@ -114,9 +114,9 @@ export const Listing = (props: ListingProps) => {
         .then((res) => {
           sell(parseInt(cookies.userID), res.id)
         })
-        .catch((error: Error) => {
-          toast.error(error.message)
-          console.error("POST error:", error)
+        .catch(async (err) => {
+          const { message } = await err.json()
+          toast.error(message || "Comments could not be fetched")
         })
     }
   }

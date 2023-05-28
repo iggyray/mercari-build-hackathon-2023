@@ -106,28 +106,28 @@ type loginResponse struct {
 }
 
 type getCommentResponse struct {
-	CommentId		int64	`json:"comment_id"`
-	ParentCommentId	*int64 `json:"parent_comment_id"`
-	UserId			int64	`json:"user_id"`
-	UserName		string	`json:"user_name"`
-	ItemId			int32	`json:"item_id"`
-	Content			string	`json:"content"`
-	CreatedAt		string	`json:"created_at"`
+	CommentId       int64  `json:"comment_id"`
+	ParentCommentId *int64 `json:"parent_comment_id"`
+	UserId          int64  `json:"user_id"`
+	UserName        string `json:"user_name"`
+	ItemId          int32  `json:"item_id"`
+	Content         string `json:"content"`
+	CreatedAt       string `json:"created_at"`
 }
 
 type addCommentRequest struct {
-	ParentCommentId	*int64 `json:"parent_comment_id"`
-	Content			string	`json:"content"`
+	ParentCommentId *int64 `json:"parent_comment_id"`
+	Content         string `json:"content"`
 }
 
 type addCommentResponse struct {
-	CommentId		int64	`json:"comment_id"`
-	ParentCommentId	*int64 `json:"parent_comment_id"`
-	UserId			int64	`json:"user_id"`
-	UserName		string	`json:"user_name"`
-	ItemId			int32	`json:"item_id"`
-	Content			string	`json:"content"`
-	CreatedAt		string	`json:"created_at"`
+	CommentId       int64  `json:"comment_id"`
+	ParentCommentId *int64 `json:"parent_comment_id"`
+	UserId          int64  `json:"user_id"`
+	UserName        string `json:"user_name"`
+	ItemId          int32  `json:"item_id"`
+	Content         string `json:"content"`
+	CreatedAt       string `json:"created_at"`
 }
 
 type Handler struct {
@@ -303,10 +303,16 @@ func (h *Handler) AddItem(c echo.Context) error {
 	}
 	defer src.Close()
 
-	var dest []byte
-	blob := bytes.NewBuffer(dest)
 	// TODO: pass very big file
 	// http.StatusBadRequest(400)
+	const MaxImageSize = 1 << 20 // 1 MB
+	if file.Size > MaxImageSize {
+		return echo.NewHTTPError(http.StatusBadRequest, "Image size is too big")
+	}
+
+	var dest []byte
+	blob := bytes.NewBuffer(dest)
+
 	if _, err := io.Copy(blob, src); err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err)
 	}
@@ -743,13 +749,13 @@ func (h *Handler) GetCommentsByItemId(c echo.Context) error {
 			return c.JSON(http.StatusInternalServerError, err.Error())
 		}
 		res = append(res, getCommentResponse{
-			CommentId: comment.CommentID, 
-			ParentCommentId: comment.ParentCommentID, 
-			UserId: comment.UserID, 
-			UserName: comment.UserName, 
-			ItemId: comment.ItemID, 
-			Content: comment.Content, 
-			CreatedAt: comment.CreatedAt,
+			CommentId:       comment.CommentID,
+			ParentCommentId: comment.ParentCommentID,
+			UserId:          comment.UserID,
+			UserName:        comment.UserName,
+			ItemId:          comment.ItemID,
+			Content:         comment.Content,
+			CreatedAt:       comment.CreatedAt,
 		})
 	}
 
@@ -784,12 +790,12 @@ func (h *Handler) AddComment(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, addCommentResponse{
-		CommentId: comment.CommentID,
+		CommentId:       comment.CommentID,
 		ParentCommentId: comment.ParentCommentID,
-		UserId: comment.UserID,
-		UserName: comment.UserName,
-		ItemId: comment.ItemID,
-		Content: comment.Content,
-		CreatedAt: comment.CreatedAt,
+		UserId:          comment.UserID,
+		UserName:        comment.UserName,
+		ItemId:          comment.ItemID,
+		Content:         comment.Content,
+		CreatedAt:       comment.CreatedAt,
 	})
 }
