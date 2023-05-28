@@ -13,7 +13,7 @@ export const CommentReply = ({ reply }: CommentReplyProps) => {
       <div className="CommentReplyBubble">
         <p>{reply.content}</p>
         <div className="CommentReplyFooter">
-          <p>{reply.created_at}</p>
+          <span>{reply.created_at}</span>
         </div>
       </div>
     </div>

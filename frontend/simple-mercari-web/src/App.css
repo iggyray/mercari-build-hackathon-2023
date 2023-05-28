@@ -297,6 +297,17 @@ body {
   border-radius: 7px;
 }
 
+.CommentFooter {
+  display: flex;
+  justify-content: space-between;
+  font-size: small;
+}
+
+.CommentFooter .ReplyButton:hover {
+  font-style: italic;
+  cursor: pointer;
+}
+
 .CommentReplyWrapper {
   width: 90%;
   margin-bottom: 10px;
@@ -308,4 +319,14 @@ body {
   background-color: #575757;
   padding: 10px;
   border-radius: 7px;
+}
+
+.CommentReplyFooter {
+  display: flex;
+  justify-content: end;
+  font-size: small;
+}
+
+.CommentReplyInput {
+  margin-top: 10px;
 }
