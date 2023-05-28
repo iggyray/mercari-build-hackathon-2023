@@ -85,7 +85,9 @@ export const Listing = (props: ListingProps) => {
 
 
 
+
     if (!props.itemValue) {
+
       fetcher<{ id: number }>(`/items`, {
         method: "POST",
         body: data,
