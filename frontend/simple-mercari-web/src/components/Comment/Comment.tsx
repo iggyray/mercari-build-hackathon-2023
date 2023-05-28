@@ -8,7 +8,7 @@ export const Comment = ({ comment }: CommentProps) => {
   return (
     <div className="CommentWrapper">
       <h6>
-        <b>User: {comment.user_id}</b>
+        <b>{comment.user_name}</b>
       </h6>
       <div className="CommentBubble">
         <p>{comment.content}</p>
