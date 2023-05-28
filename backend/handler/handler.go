@@ -106,6 +106,7 @@ type loginResponse struct {
 type getCommentResponse struct {
 	CommentId	int64	`json:"comment_id"`
 	UserId		int64	`json:"user_id"`
+	UserName	string	`json:"user_name"`
 	ItemId		int32	`json:"item_id"`
 	Content		string	`json:"content"`
 	CreatedAt	string	`json:"created_at"`
@@ -118,6 +119,7 @@ type addCommentRequest struct {
 type addCommentResponse struct {
 	CommentId	int64	`json:"comment_id"`
 	UserId		int64	`json:"user_id"`
+	UserName	string	`json:"user_name"`
 	ItemId		int32	`json:"item_id"`
 	Content		string	`json:"content"`
 	CreatedAt	string	`json:"created_at"`
@@ -721,7 +723,7 @@ func (h *Handler) GetCommentsByItemId(c echo.Context) error {
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, err)
 		}
-		res = append(res, getCommentResponse{CommentId: comment.CommentID, UserId: comment.UserID, ItemId: comment.ItemID, Content: comment.Content, CreatedAt: comment.CreatedAt})
+		res = append(res, getCommentResponse{CommentId: comment.CommentID, UserId: comment.UserID, UserName: comment.UserName, ItemId: comment.ItemID, Content: comment.Content, CreatedAt: comment.CreatedAt})
 	}
 
 	return c.JSON(http.StatusOK, res)
@@ -741,13 +743,15 @@ func (h *Handler) AddComment(c echo.Context) error {
 	if err != nil {
 		return echo.NewHTTPError(http.StatusUnauthorized, err)
 	}
+
+	user, err := h.UserRepo.GetUser(ctx, userID)
 	
 	itemID, err := strconv.Atoi(c.Param("itemID"))
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err)
 	}
 
-	comment, err := h.CommentRepo.AddComment(ctx, domain.Comment{UserID: userID, ItemID: int32(itemID), Content: req.Content})
+	comment, err := h.CommentRepo.AddComment(ctx, domain.Comment{UserID: user.ID, UserName: user.Name, ItemID: int32(itemID), Content: req.Content})
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err)
 	}
@@ -755,6 +759,7 @@ func (h *Handler) AddComment(c echo.Context) error {
 	return c.JSON(http.StatusOK, addCommentResponse{
 		CommentId: comment.CommentID,
 		UserId: comment.UserID,
+		UserName: comment.UserName,
 		ItemId: comment.ItemID,
 		Content: comment.Content,
 		CreatedAt: comment.CreatedAt,
