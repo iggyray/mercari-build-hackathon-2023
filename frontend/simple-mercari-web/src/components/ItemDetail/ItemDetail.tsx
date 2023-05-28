@@ -39,8 +39,6 @@ export const ItemDetail = ({ onUpdateItem }: UpdateItemProps) => {
   const [cookies] = useCookies(["token", "userID"])
 
   const handleNewComment = (comment: string) => {
-    console.log("FROM DETAIL")
-    console.log(comment)
     fetcher<{ comment: CommentType }>(`/items/${params.id}/comments`, {
       method: "POST",
       headers: {
@@ -51,9 +49,9 @@ export const ItemDetail = ({ onUpdateItem }: UpdateItemProps) => {
       body: JSON.stringify({
         content: comment,
       }),
-    }).catch((error: Error) => {
-      toast.error(error.message)
-      console.error("POST error:", error)
+    }).catch(async (err) => {
+      const { message } = await err.json()
+      toast.error(message)
     })
   }
   const [comments, setComments] = useState<CommentType[]>([])
@@ -67,11 +65,9 @@ export const ItemDetail = ({ onUpdateItem }: UpdateItemProps) => {
       },
     })
       .then((res) => {
-        console.log("GET success:", res)
         setItem(res)
       })
       .catch((err) => {
-        console.log(`GET error:`, err)
         toast.error(err.message)
       })
 
@@ -83,11 +79,9 @@ export const ItemDetail = ({ onUpdateItem }: UpdateItemProps) => {
       },
     })
       .then((res) => {
-        console.log("GET success:", res)
         setItemImage(res)
       })
       .catch((err) => {
-        console.log(`GET error:`, err)
         toast.error(err.message)
       })
   }
@@ -101,12 +95,11 @@ export const ItemDetail = ({ onUpdateItem }: UpdateItemProps) => {
       },
     })
       .then((res) => {
-        console.log("comments:", res)
         setComments(res)
       })
-      .catch((err) => {
-        console.log(`GET error:`, err)
-        toast.error(err.message)
+      .catch(async (err) => {
+        const { message } = await err.json()
+        toast.error(message || "Comments could not be fetched")
       })
   }
 
@@ -126,8 +119,6 @@ export const ItemDetail = ({ onUpdateItem }: UpdateItemProps) => {
         .then((_) => window.location.reload())
         .catch(async (err) => {
           const { message } = await err.json()
-          console.log(`POST error:`, err)
-
           toast.error(message || "An error occurred")
         })
     } else {
