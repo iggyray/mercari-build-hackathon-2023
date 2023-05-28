@@ -94,17 +94,39 @@ type ItemDBRepository struct {
 func NewItemRepository(db *sql.DB) ItemRepository {
 	return &ItemDBRepository{DB: db}
 }
-
 func (r *ItemDBRepository) AddItem(ctx context.Context, item domain.Item) (domain.Item, error) {
-	if _, err := r.ExecContext(ctx, "INSERT INTO items (name, price, description, category_id, seller_id, image, status) VALUES (?, ?, ?, ?, ?, ?, ?)", item.Name, item.Price, item.Description, item.CategoryID, item.UserID, item.Image, item.Status); err != nil {
+	tx, err := r.BeginTx(ctx, nil)
+	if err != nil {
 		return domain.Item{}, err
 	}
-	// TODO: if other insert query is executed at the same time, it might return wrong id
-	// http.StatusConflict(409) 既に同じIDがあった場合
-	row := r.QueryRowContext(ctx, "SELECT * FROM items WHERE rowid = LAST_INSERT_ROWID()")
 
-	var res domain.Item
-	return res, row.Scan(&res.ID, &res.Name, &res.Price, &res.Description, &res.CategoryID, &res.UserID, &res.Image, &res.Status, &res.CreatedAt, &res.UpdatedAt)
+	res, err := tx.ExecContext(ctx, "INSERT INTO items (name, price, description, category_id, seller_id, image, status) VALUES (?, ?, ?, ?, ?, ?, ?)", item.Name, item.Price, item.Description, item.CategoryID, item.UserID, item.Image, item.Status)
+	if err != nil {
+		tx.Rollback()
+		return domain.Item{}, err
+	}
+
+	itemId, err := res.LastInsertId()
+	if err != nil {
+		tx.Rollback()
+		return domain.Item{}, err
+	}
+
+	row := tx.QueryRowContext(ctx, "SELECT * FROM items WHERE ID = ?", itemId)
+
+	var resItem domain.Item
+	err = row.Scan(&resItem.ID, &resItem.Name, &resItem.Price, &resItem.Description, &resItem.CategoryID, &resItem.UserID, &resItem.Image, &resItem.Status, &resItem.CreatedAt, &resItem.UpdatedAt)
+	if err != nil {
+		tx.Rollback()
+		return domain.Item{}, err
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		return domain.Item{}, err
+	}
+
+	return resItem, nil
 }
 
 func (r *ItemDBRepository) UpdateItem(ctx context.Context, id int32, item domain.Item) error {
@@ -243,11 +265,11 @@ func NewCommentRepository(db *sql.DB) CommentRepository {
 }
 
 func (r *CommentDBRepository) AddComment(ctx context.Context, comment domain.Comment) (domain.Comment, error) {
-	if _, err := r.ExecContext(ctx, "INSERT INTO comments (parent_comment_id, user_id, user_name, item_id, content) VALUES (?, ?, ?, ?, ?)", 
+	if _, err := r.ExecContext(ctx, "INSERT INTO comments (parent_comment_id, user_id, user_name, item_id, content) VALUES (?, ?, ?, ?, ?)",
 		comment.ParentCommentID,
-		comment.UserID, 
-		comment.UserName, 
-		comment.ItemID, 
+		comment.UserID,
+		comment.UserName,
+		comment.ItemID,
 		comment.Content); err != nil {
 		return domain.Comment{}, err
 	}
