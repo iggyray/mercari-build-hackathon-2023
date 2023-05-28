@@ -232,7 +232,7 @@ func (r *CommentDBRepository) AddComment(ctx context.Context, comment domain.Com
 	row := r.QueryRowContext(ctx, "SELECT * FROM comments WHERE rowid = LAST_INSERT_ROWID()")
 
 	var res domain.Comment
-	return res, row.Scan(&res.CommentID, &res.UserID, &res.ItemID, &res.Content)
+	return res, row.Scan(&res.CommentID, &res.UserID, &res.ItemID, &res.Content, &res.CreatedAt)
 }
 
 func (r *CommentDBRepository) GetCommentsByItemId(ctx context.Context, itemId int32) ([]domain.Comment, error) {

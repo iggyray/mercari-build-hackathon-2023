@@ -257,3 +257,42 @@ body {
   align-items: center;
   justify-content: left;
 }
+
+.CommentBoardWrapper {
+  display: grid;
+  place-items: center;
+  grid-template-columns: 100%;
+  row-gap: 10px;
+}
+
+.CommentInput {
+  width: 100%;
+}
+
+.CommentInput textarea {
+  background-color: #222427;
+  color: white;
+  border-color: #6d757d;
+}
+
+.CommentInput textarea:focus {
+  background-color: #222427;
+  color: white;
+  border-color: #6d757d;
+}
+
+.CommentBoard {
+  width: 100%;
+}
+
+.CommentWrapper {
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.CommentBubble {
+  width: 100%;
+  background-color: #575757;
+  padding: 10px;
+  border-radius: 7px;
+}

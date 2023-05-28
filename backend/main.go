@@ -73,6 +73,7 @@ func run(ctx context.Context) int {
 		DB:       sqlDB,
 		UserRepo: db.NewUserRepository(sqlDB),
 		ItemRepo: db.NewItemRepository(sqlDB),
+		CommentRepo: db.NewCommentRepository(sqlDB),
 	}
 
 	// Routes

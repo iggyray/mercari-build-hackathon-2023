@@ -4,6 +4,7 @@ import { useCookies } from "react-cookie"
 import { MerComponent } from "../MerComponent"
 import { toast } from "react-toastify"
 import { fetcher, fetcherBlob } from "../../helper"
+import { CommentBoard, CommentType } from "../CommentBoard/CommentBoard"
 
 const ItemStatus = {
   ItemStatusInitial: 1,
@@ -37,6 +38,26 @@ export const ItemDetail = ({ onUpdateItem }: UpdateItemProps) => {
   const [itemImage, setItemImage] = useState<Blob>()
   const [cookies] = useCookies(["token", "userID"])
 
+  const handleNewComment = (comment: string) => {
+    console.log("FROM DETAIL")
+    console.log(comment)
+    fetcher<{ comment: CommentType }>(`/items/${params.id}/comments`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${cookies.token}`,
+      },
+      body: JSON.stringify({
+        content: comment,
+      }),
+    }).catch((error: Error) => {
+      toast.error(error.message)
+      console.error("POST error:", error)
+    })
+  }
+  const [comments, setComments] = useState<CommentType[]>([])
+
   const fetchItem = () => {
     fetcher<Item>(`/items/${params.id}`, {
       method: "GET",
@@ -64,6 +85,24 @@ export const ItemDetail = ({ onUpdateItem }: UpdateItemProps) => {
       .then((res) => {
         console.log("GET success:", res)
         setItemImage(res)
+      })
+      .catch((err) => {
+        console.log(`GET error:`, err)
+        toast.error(err.message)
+      })
+  }
+
+  const fetchComments = () => {
+    fetcher<CommentType[]>(`/items/${params.id}/comments`, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => {
+        console.log("comments:", res)
+        setComments(res)
       })
       .catch((err) => {
         console.log(`GET error:`, err)
@@ -115,6 +154,7 @@ export const ItemDetail = ({ onUpdateItem }: UpdateItemProps) => {
 
   useEffect(() => {
     fetchItem()
+    fetchComments()
   }, [])
 
   useEffect(() => {
@@ -156,6 +196,7 @@ export const ItemDetail = ({ onUpdateItem }: UpdateItemProps) => {
                   Purchase
                 </button>
               )}
+              <CommentBoard onComment={handleNewComment} comments={comments} />
             </div>
           </div>
         )}
