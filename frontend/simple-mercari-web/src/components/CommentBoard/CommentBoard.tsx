@@ -3,6 +3,7 @@ import { Comment } from "../Comment/Comment"
 
 export interface CommentType {
   comment_id: number
+  parent_comment_id: number | undefined
   user_id: number
   user_name: string
   item_id: number
@@ -10,18 +11,30 @@ export interface CommentType {
   created_at: string
 }
 
+export type NewCommentValues = {
+  parentCommentId: number | undefined
+  content: string
+}
+
 interface CommentBoardProps {
-  onComment: (comment: string) => void
+  onComment: (comment: NewCommentValues) => void
   comments: CommentType[]
 }
 
 export const CommentBoard = ({ onComment, comments }: CommentBoardProps) => {
-  const [newCommentValue, setNewCommentValue] = useState<string>("")
+  const defaultNewCommentState: NewCommentValues = {
+    parentCommentId: undefined,
+    content: "",
+  }
+  const [newCommentValue, setNewCommentValue] = useState<NewCommentValues>(
+    defaultNewCommentState
+  )
 
-  const onNewCommentValueChange = (
-    event: React.ChangeEvent<HTMLTextAreaElement>
-  ) => {
-    setNewCommentValue(event.target.value)
+  const onNewComment = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setNewCommentValue({
+      parentCommentId: undefined,
+      content: event.target.value,
+    })
   }
 
   const onSubmitComment = (event: React.FormEvent<HTMLFormElement>) => {
@@ -35,7 +48,7 @@ export const CommentBoard = ({ onComment, comments }: CommentBoardProps) => {
         {comments && (
           <div className="CommentBoard flex-column">
             {comments.map((comment) => {
-              return <Comment comment={comment} />
+              return <Comment key={comment.comment_id} comment={comment} />
             })}
           </div>
         )}
@@ -45,7 +58,7 @@ export const CommentBoard = ({ onComment, comments }: CommentBoardProps) => {
               className="form-control"
               rows={3}
               placeholder="Add a comment"
-              onChange={onNewCommentValueChange}
+              onChange={onNewComment}
               required
             ></textarea>
             <button type="submit" id="MerButton">
