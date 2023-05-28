@@ -1,4 +1,5 @@
 import { CommentType } from "../CommentBoard"
+import { CommentReply } from "../CommentReply"
 
 interface CommentProps {
   comment: CommentType
@@ -16,6 +17,7 @@ export const Comment = ({ comment }: CommentProps) => {
           <p>{comment.created_at}</p>
         </div>
       </div>
+      <CommentReply reply={comment} />
     </div>
   )
 }

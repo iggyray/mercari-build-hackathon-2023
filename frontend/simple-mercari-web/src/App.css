@@ -296,3 +296,16 @@ body {
   padding: 10px;
   border-radius: 7px;
 }
+
+.CommentReplyWrapper {
+  width: 90%;
+  margin-bottom: 10px;
+  margin-left: 10%;
+}
+
+.CommentReplyBubble {
+  width: 100%;
+  background-color: #575757;
+  padding: 10px;
+  border-radius: 7px;
+}
