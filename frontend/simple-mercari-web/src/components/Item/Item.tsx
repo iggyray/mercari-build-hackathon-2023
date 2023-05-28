@@ -44,7 +44,18 @@ export const Item: React.FC<{ item: Item }> = ({ item }) => {
           <p className="h6">¥ {item.price}</p>
         </div>
       </div>
-      <p className="h6">{item.name}</p>
+      <div className="ItemTitle">
+        {item.status === 3 && (
+          <button
+            type="button"
+            id="SoldOut"
+            className="btn btn-outline-danger  btn-sm"
+          >
+            Sold
+          </button>
+        )}
+        <p className="h6">{item.name}</p>
+      </div>
     </div>
   )
 }
