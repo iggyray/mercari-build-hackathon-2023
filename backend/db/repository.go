@@ -3,7 +3,6 @@ package db
 import (
 	"context"
 	"database/sql"
-	"fmt"
 
 	"github.com/iggyray/mecari-build-hackathon-2023/backend/domain"
 )
@@ -24,16 +23,6 @@ func NewUserRepository(db *sql.DB) UserRepository {
 }
 
 func (r *UserDBRepository) AddUser(ctx context.Context, user domain.User) (int64, error) {
-	// Check if user already exists
-	var exists bool
-	err := r.QueryRowContext(ctx, "SELECT exists (SELECT 1 FROM users WHERE name=?)", user.Name).Scan(&exists)
-	if err != nil && err != sql.ErrNoRows {
-		return 0, err
-	}
-
-	if exists {
-		return 0, fmt.Errorf("User with the name %s already exists", user.Name)
-	}
 
 	if _, err := r.ExecContext(ctx, "INSERT INTO users (name, password) VALUES (?, ?)", user.Name, user.Password); err != nil {
 		return 0, err
