@@ -37,7 +37,7 @@ export const Home = (props: HomeComponentProps) => {
   }
 
   const fetchItems = () => {
-    fetcher<Item[]>(`/items`, {
+    fetcher<Item[]>(`/itemsv2`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
