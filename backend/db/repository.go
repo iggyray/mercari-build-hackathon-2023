@@ -80,6 +80,7 @@ type ItemRepository interface {
 	UpdateItem(ctx context.Context, id int32, item domain.Item) error
 	GetItem(ctx context.Context, id int32) (domain.Item, error)
 	GetItemImage(ctx context.Context, id int32) ([]byte, error)
+	GetOnSaleItems(ctx context.Context) ([]domain.Item, error)
 	GetAllItems(ctx context.Context) ([]domain.Item, error)
 	GetItemsByKeyword(ctx context.Context, keyword string) ([]domain.Item, error)
 	GetItemsByUserID(ctx context.Context, userID int64) ([]domain.Item, error)
@@ -162,8 +163,29 @@ func (r *ItemDBRepository) GetItemImage(ctx context.Context, id int32) ([]byte, 
 	return image, err
 }
 
+func (r *ItemDBRepository) GetOnSaleItems(ctx context.Context) ([]domain.Item, error) {
+	rows, err := r.QueryContext(ctx, "SELECT * FROM items WHERE status = ? ORDER BY updated_at desc", domain.ItemStatusOnSale)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var items []domain.Item
+	for rows.Next() {
+		var item domain.Item
+		if err := rows.Scan(&item.ID, &item.Name, &item.Price, &item.Description, &item.CategoryID, &item.UserID, &item.Image, &item.Status, &item.CreatedAt, &item.UpdatedAt); err != nil {
+			return nil, err
+		}
+		items = append(items, item)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 func (r *ItemDBRepository) GetAllItems(ctx context.Context) ([]domain.Item, error) {
-	rows, err := r.QueryContext(ctx, "SELECT * FROM items ORDER BY updated_at desc")
+	rows, err := r.QueryContext(ctx, "SELECT * FROM items WHERE status IN (?, ?) ORDER BY updated_at desc", domain.ItemStatusOnSale, domain.ItemStatusSoldOut)
 	if err != nil {
 		return nil, err
 	}

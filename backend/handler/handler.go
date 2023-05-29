@@ -42,6 +42,13 @@ type registerResponse struct {
 	ID   int64  `json:"id"`
 	Name string `json:"name"`
 }
+
+type getOnSaleItemsResponse struct {
+	ID           int32  `json:"id"`
+	Name         string `json:"name"`
+	Price        int64  `json:"price"`
+	CategoryName string `json:"category_name"`
+}
 type getItemsResponse struct {
 	ID           int32             `json:"id"`
 	Name         string            `json:"name"`
@@ -427,6 +434,30 @@ func (h *Handler) Sell(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, "successful")
+}
+
+func (h *Handler) GetOnSaleItems(c echo.Context) error {
+	ctx := c.Request().Context()
+
+	items, err := h.ItemRepo.GetOnSaleItems(ctx)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusNotFound, err)
+	}
+
+	var res []getOnSaleItemsResponse
+	for _, item := range items {
+		cats, err := h.ItemRepo.GetCategories(ctx)
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, err)
+		}
+		for _, cat := range cats {
+			if cat.ID == item.CategoryID {
+				res = append(res, getOnSaleItemsResponse{ID: item.ID, Name: item.Name, Price: item.Price, CategoryName: cat.Name})
+			}
+		}
+	}
+
+	return c.JSON(http.StatusOK, res)
 }
 
 func (h *Handler) GetAllItems(c echo.Context) error {
