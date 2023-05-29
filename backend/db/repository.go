@@ -152,7 +152,7 @@ func (r *ItemDBRepository) GetItemImage(ctx context.Context, id int32) ([]byte, 
 	row := r.QueryRowContext(ctx, "SELECT image FROM items WHERE id = ?", id)
 	var image []byte
 	err := row.Scan(&image)
-	if len(image) == 0 {
+	if len(image) < 1024 {
 		image, err = ioutil.ReadFile(".handler/default-image.jpg")
 		if err != nil {
 			return nil, err
