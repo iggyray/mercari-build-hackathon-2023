@@ -185,7 +185,7 @@ func (r *ItemDBRepository) GetOnSaleItems(ctx context.Context) ([]domain.Item, e
 }
 
 func (r *ItemDBRepository) GetAllItems(ctx context.Context) ([]domain.Item, error) {
-	rows, err := r.QueryContext(ctx, "SELECT * FROM items ORDER BY updated_at desc")
+	rows, err := r.QueryContext(ctx, "SELECT * FROM items WHERE status IN (?, ?) ORDER BY updated_at desc", domain.ItemStatusOnSale, domain.ItemStatusSoldOut)
 	if err != nil {
 		return nil, err
 	}
