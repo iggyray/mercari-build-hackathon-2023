@@ -1,47 +1,30 @@
-# Mini Mercari Web App
+# Mini Mercari Web App | Team 14 | Best Product Award 👑
 
-## Requirements
+## Introduction
 
-* [go](https://go.dev/)
+Developed in the concluding Hackathon week of Mercari's BUILD training programme, our team set out to build a mini Mercari app that represented our vision of the Mercari marketplace. Inspired by our own experiences of using the app, we raced against the clock to develop an app that doubled down on having an intuitive user experience, and an interactive user interface.
 
-## Getting started
+Our signature feature was the “comment reply” function, where comments on listings can be nested to improve readability. This embodied our vision of augmenting user interactions within the app - to be seamless and intuitive! 
 
-### 1. Update environment values
+## Features
 
-1. Create `initialize` branch.
+### Frontend
 
-2. Run bellow command.
+- Log in/ Sign up page toggle
+- Search listings by keyword
+- Filter listings by item status
+- Update item listing
+- Comment on listing
+- Reply to comments on listing
+- Various UI enhancements and optimisations
 
-```shell
-$ go run tools/setup.go -g [your github name] -t [your team id]
+### Backend
 
-(e.g.) $ go run tools/setup.go -g yourname -t 16
-```
+- Improved error handling
+- Improved database schema to enable login/ signup by `username`
+- Created new endpoint and extended database schema for nested comments
 
-3. Create a PR form `initialize` to `main`.
+## Demo
 
-### 2. Launch services
+https://github.com/iggyray/mercari-build-hackathon-2023/assets/128442523/067fe8a6-3d4b-4823-815d-b42e45d82673
 
-See `backend/README.md` for backend service and `frontend/simple-mercari-web/README.md` for frontend service.
-
-## How to run bench marker
-
-* Open [dashboard](https://mercari-build-hackathon-2023-front-d3sqdyhc4a-uc.a.run.app/)
-* Tap `RUN BENCHMARK` Button!
-
-## What should we do first?
-
-- First, stand up services and see logs both of backend and frontend services
-  - For backend, you can see the logs on the terminal where the server is set up
-  - For frontend, use Chrome Devtool to check
-    - https://developer.chrome.com/docs/devtools/overview/
-- Try to use mini Mercari and find problems that should not occur in the original Mercari service. For example:
-  - When you check the item detail page of your listed items...?
-  - When you try to buy items that exceed your available balance...?
-  - When there are multiple users purchase an item at the same time...?
-- The UI is quite simple and difficult to use
-  - It looks inconvenient if there is no message indicating a request to the backend has failed
-  - As the number of items increase, the UI is likely to become slow
-  - Feel free to make the site more user-friendly like implementing features not implemented in actual Mercari web site
-
-However, your changes must be made within the constraints of the bench marker. Please refer to backend/README.md for details.
